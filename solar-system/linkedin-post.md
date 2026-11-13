@@ -30,4 +30,6 @@
 #Claude #Fable #Threejs #바이브코딩 #디자인 #과학교육
 
 
+(영상)
+
 https://claude.ai/artifact/STZWnwywuAohy7BuW7hbT6
