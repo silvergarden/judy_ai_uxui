@@ -1,4 +1,4 @@
-# kwonjeongeun_ux
+# kwonjeongeun_ai_uxui
 
 바이브코딩 작업 모음입니다.
 
