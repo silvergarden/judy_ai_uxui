@@ -28,3 +28,10 @@
 
 
 #Claude #Fable #바이브코딩 #디자인 #UX #멘토링
+
+
+![CampusFlow v3.0 시연 영상](CampusFlow-v3.0.gif)
+
+[전체 영상(MP4, 59초)](CampusFlow-v3.0.mp4)
+
+https://claude.ai/artifact/83ALQD2SKbfv9vExN9omt7
