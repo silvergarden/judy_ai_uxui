@@ -17,7 +17,7 @@ Fable 5.2와 대화하며 만든 우리 집 3D 룸 투어입니다. 코드는 �
 | `DESIGN.md` | 색, 배치, 버튼, 조작, 유니버설 디자인 기준을 정리한 문서 |
 | `check.py` | 게시 전에 돌린 자동 점검 스크립트(72개 항목). `python3 check.py`로 실행합니다(playwright와 크롬 필요). |
 | `linkedin-post.md` | 작업 후기 |
-| `[Fable] room-tour-v1.0.mp4`, `[Fable] room-tour-v1.0.gif` | 시연 영상(40초, 소리 없음). GIF는 위에서 보기 부분 17초 미리 보기 |
+| `room-tour-v1.0 [Fable].mp4`, `room-tour-v1.0 [Fable].gif` | 시연 영상(40초, 소리 없음). GIF는 위에서 보기 부분 17초 미리 보기 |
 
 ## 조작
 
