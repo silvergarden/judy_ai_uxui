@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CampusFlow v3.0 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* v3.0 디자인 시스템: 연회색 바탕 위 흰 카드, 검은 채움은 화면당 주요 버튼 하나, 색은 의미에만 */
+:root{
+  color-scheme:light;
+  --bg:#F2F2EF; --card:#FFFFFF; --card-border:#DEDED8; --line:#E5E5E2;
+  --ink:#191919; --muted:#676767; --placeholder:#6E6E6A;--ph:#A6A6A1; --input-border:#8C8C88;
+  --soft:#EBEBE7; --selected-bg:#E4E4DE; --focus:#0155BF;
+  --today-bg:#FFF4D6; --live-bg:#E7F4EF; --live:#0B7A5C;
+  --danger:#C8372A; --danger-bg:#FDECEA; --warn:#9A5B00; --warn-bg:#FDF1DC;
+  --e1:#0155BF; --e1-bg:#CCDDF2; --e2:#9CC355; --e2-bg:#D9E8BE;
+  --e3:#0E9972; --e3-bg:#C5E7DD; --e4:#FFCE52; --e4-bg:#FFE7A9;
+  --p1:#0155BF; --p2:#FFCE52; --p3:#0E9972; --p4:#9CC355; --p5:#F7A224;
+  --display:"Hahmlet","Noto Serif KR",Georgia,serif;
+  --body:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{display:flex;height:100%}
+/* sidebar */
+.side{width:248px;flex:none;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:32px 20px 20px}
+.brand{background:none;border:0;text-align:left;padding:0 8px;margin-bottom:36px}
+.brand b{display:block;font-weight:900;font-size:24px;letter-spacing:-1px;line-height:1.2;white-space:nowrap}
+.brand .tag{grid-column:1/-1;margin-top:6px;font-size:11px;letter-spacing:2px;color:var(--muted);font-weight:500;white-space:nowrap}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{display:flex;align-items:center;gap:12px;height:48px;padding:0 16px;border:0;border-radius:999px;background:none;font-weight:700;font-size:16px;text-align:left}
+.nav button:hover{background:var(--bg)}
+.nav button[aria-current="page"]{background:var(--soft)}
+.nav svg{width:18px;height:18px;flex:none}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding:16px 8px 0;font-size:13px;color:var(--muted)}
+.side-foot b{color:var(--ink);display:block;font-size:14px}
+.proto{margin-top:14px;border:1px dashed var(--input-border);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5}
+.proto-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.proto b{font-size:12px;display:inline}
+.proto p{margin:4px 0 0}
+.ai{display:inline-flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap}
+.ai svg{width:16px;height:16px;flex:none;color:var(--input-border);overflow:visible}
+.ai.on{color:var(--ink)}
+.ai.on svg{color:var(--live);stroke:url(#neon);stroke-width:2.4;animation:twinkle 2.4s ease-in-out infinite;transform-origin:50% 55%}
+.ai.on svg path:last-child{animation:spark 2.4s ease-in-out infinite;transform-origin:19px 5px}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}45%{transform:scale(1.18) rotate(8deg)}60%{transform:scale(.94) rotate(-4deg)}}
+@keyframes spark{0%,100%{opacity:1;transform:scale(1)}40%{opacity:.15;transform:scale(.5)}70%{opacity:1;transform:scale(1.3)}}
+@media (prefers-reduced-motion:reduce){.ai.on svg,.ai.on svg path:last-child{animation:none}}
+/* main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{padding:28px 40px 20px;flex:none}
+.eyebrow{font-size:14px;font-weight:700;color:var(--muted)}
+h1{font-family:var(--display);font-weight:400;font-size:40px;line-height:1.25;letter-spacing:-.5px;margin:10px 0 8px;text-wrap:balance}
+.sub{color:var(--muted);font-size:16px;margin:0}
+.body{flex:1;overflow:auto;padding:4px 40px 40px}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:24px;padding:32px}
+h2{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.4;margin:0;min-height:48px;display:flex;align-items:center}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.label{font-size:14px;font-weight:700;display:block;margin-bottom:6px}
+.stack{display:flex;flex-direction:column}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;min-width:112px;padding:0 20px;border-radius:999px;border:1px solid transparent;font-weight:700;font-size:16px;background:none;white-space:nowrap}
+.btn svg{width:18px;height:18px}
+.btn.m{height:40px;min-width:80px;padding:0 16px;font-size:15px}
+.btn.icon{min-width:0;width:40px;padding:0}
+.btn.icon.l{width:48px}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover{background:#000}
+.btn.secondary{background:var(--card);border-color:var(--input-border)}
+.btn.secondary:hover{background:var(--bg)}
+.btn.tertiary{min-width:0}
+.btn.tertiary:hover{background:var(--bg)}
+.btn.danger{background:var(--card);border-color:var(--danger);color:var(--danger)}
+.btn.danger:hover{background:var(--danger-bg)}
+.btn:disabled{background:var(--soft);color:var(--placeholder);border-color:transparent;cursor:not-allowed}
+.chip{height:40px;min-width:56px;padding:0 16px;border-radius:999px;border:1px solid var(--input-border);background:var(--card);font-weight:700;font-size:15px}
+.chip:hover{background:var(--bg)}
+.chip[aria-pressed="true"]{background:var(--selected-bg);border-color:var(--ink);box-shadow:inset 0 0 0 .5px var(--ink)}
+.chip:disabled{color:var(--placeholder);cursor:not-allowed}
+.tabs{display:inline-flex;gap:4px;padding:4px;background:var(--soft);border-radius:999px}
+.tabs button{height:40px;min-width:80px;padding:0 16px;border-radius:999px;border:1px solid transparent;background:none;font-weight:700;font-size:15px}
+.tabs button[aria-selected="true"]{background:var(--card);border-color:var(--input-border)}
+.badge{display:inline-flex;align-items:center;height:23px;padding:0 9px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+.badge.over{background:var(--danger-bg);color:var(--danger)}
+.badge.soon{background:var(--warn-bg);color:var(--warn)}
+.badge.gray{background:var(--bg);color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;font-size:14px;font-weight:500;background:var(--bg);color:var(--muted)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.live{background:var(--live-bg);color:var(--ink)}
+.pill.live i{background:var(--live)}
+.pill.paused{background:var(--warn-bg);color:var(--ink)}
+.pill.paused i{background:var(--warn)}
+input[type=text],input[type=date],input[type=time],input[type=number],select,textarea{height:48px;border:1px solid var(--input-border);border-radius:12px;background:var(--card);padding:0 16px;font-size:16px;width:100%}
+textarea{height:auto;padding:12px 14px;resize:none;line-height:1.5}
+select{appearance:none;-webkit-appearance:none;padding:0 44px 0 16px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23191919' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+::placeholder{color:var(--ph);opacity:1}
+.cb{appearance:none;width:24px;height:24px;flex:none;margin:0;border:1.5px solid var(--input-border);border-radius:7px;background:var(--card);cursor:pointer;display:grid;place-content:center}
+.cb:checked{background:var(--ink);border-color:var(--ink)}
+.cb:checked::after{content:"";width:11px;height:6px;border:2.5px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translateY(-1px)}
+.cb:disabled{background:var(--bg);border-color:var(--line);cursor:not-allowed}
+.switch{appearance:none;width:44px;height:26px;border-radius:999px;background:var(--input-border);position:relative;cursor:pointer;margin:0;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}
+.switch:checked{background:var(--ink)}
+.switch:checked::after{left:21px}
+/* timetable */
+.home{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:stretch}
+.rightcol{display:flex;flex-direction:column;gap:24px}
+.home.solo{grid-template-columns:minmax(0,1fr)}
+.rightcol .card:last-child{flex:1}
+.wk{display:grid;grid-template-columns:56px repeat(5,minmax(0,1fr));margin-top:16px}
+.wk .dh{text-align:center;padding-bottom:8px;font-weight:700}
+.wk .dh small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.wk .dh.today small{color:var(--ink);font-weight:700}
+.times{position:relative}
+.times span{position:absolute;right:10px;transform:translateY(-50%);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.col{position:relative;border-left:1px solid var(--line);background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 56px;border-bottom:1px solid var(--line)}
+.col:last-child{border-right:1px solid var(--line)}
+.col.today{background-color:var(--today-bg)}
+.blk{position:absolute;left:0;right:0;border:0;text-align:left;padding:10px 12px 10px 16px;font-size:13px;line-height:1.45;overflow:hidden;border-radius:0}
+.blk b{display:block;font-size:15px;font-weight:700}
+.blk strong{display:block}
+.blk{color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
+.blk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--bar)}
+.blk.c1{background:var(--e1-bg);--bar:var(--e1)}.blk.c2{background:var(--e2-bg);--bar:var(--e2)}
+.blk.c3{background:var(--e3-bg);--bar:var(--e3)}.blk.c4{background:var(--e4-bg);--bar:var(--e4)}
+.blk.off{background:var(--card);color:var(--muted);outline:1px dashed var(--muted);outline-offset:-1px;text-decoration:line-through}
+.blk.off::before{display:none}
+.blk.study{background:var(--card);color:var(--muted);outline:1.5px dashed var(--muted);outline-offset:-1px;padding-left:12px}
+.blk.study::before{display:none}
+.blk.study b{color:var(--ink);font-weight:700;font-size:14px}
+.mo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-top:16px;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.mo .mh{padding:8px;text-align:center;font-weight:700;font-size:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mo button{min-height:86px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card);text-align:left;padding:8px;display:flex;flex-direction:column;gap:4px;font-size:12px}
+.mo button:hover{background:var(--bg)}
+.mo button.out{color:var(--placeholder)}
+.mo button.today{background:var(--today-bg)}
+.mo button b{font-size:14px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.sticker{position:relative;width:84px;height:44px;flex:none}
+.sticker i{position:absolute;width:32px;height:32px;border-radius:50%;mix-blend-mode:multiply}
+/* tasks */
+.task{position:relative;display:flex;gap:14px;padding:16px 12px;border-radius:12px}
+.task::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
+.task:hover{background:var(--bg)}
+.task .cb{margin-top:0}
+.task .tt{font-weight:700;font-size:18px;line-height:24px}
+.task.done .tt{color:var(--muted);text-decoration:line-through}
+.task.ended .tt{color:var(--muted)}
+.task .meta{font-size:14px;color:var(--muted)}
+.task .edit{border-color:transparent}
+.task:hover .edit,.task .edit:focus-visible{background:var(--card);border-color:var(--input-border)}
+/* chat */
+.chat{display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden}
+.chat-h{padding:32px 32px 20px;border-bottom:1px solid var(--line)}
+.msgs{flex:1;overflow:auto;padding:28px 32px 36px;display:flex;flex-direction:column;gap:22px;scrollbar-width:thin}
+.msg{display:flex;gap:12px;align-items:flex-start;max-width:860px}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.av{width:36px;height:36px;border-radius:10px;background:var(--soft);display:grid;place-content:center;flex:none;font-weight:700;font-size:14px}
+.av svg{width:18px;height:18px}
+.msg.me .av{background:var(--bg);border:1px solid var(--line)}
+.bub{border:1px solid var(--line);border-radius:18px;padding:14px 18px;white-space:pre-wrap;word-break:break-word}
+.msg.me .bub{background:var(--bg)}
+.more{background:none;border:0;padding:0;margin-top:6px;color:var(--muted);font-size:14px;font-weight:500;display:block}
+.confirm{border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:min(560px,100%)}
+.confirm .ch{background:var(--bg);padding:12px 18px;font-weight:700;display:flex;justify-content:space-between;gap:12px}
+.confirm .ci{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line)}
+.confirm .cf{padding:14px 18px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.comp{border-top:1px solid var(--line);padding:18px 32px 20px;flex:none}
+/* planner */
+.prow{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:20px;padding:18px 0;border-bottom:1px solid var(--line);align-items:start}
+.prow h3{margin:0;font-size:19px}
+/* focus */
+.focus{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px}
+.timer{font-weight:700;font-size:clamp(56px,9vw,112px);line-height:1.1;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:20px 0}
+.num{font-weight:700;font-size:44px;line-height:1.2;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--ink);border-radius:999px}
+.rec{display:grid;grid-template-columns:180px 1fr auto;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.tn{font-variant-numeric:tabular-nums;font-weight:500}
+/* settings */
+.set{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.set .wide{grid-column:1/-1}
+.inline{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--bg);padding:16px 22px;border-radius:16px;font-weight:700}
+.inline select{width:auto;min-width:104px}
+.gridwrap.blank .wk .times,.gridwrap.blank .wk .col,.gridwrap.blank .mo>button{display:none}
+.gridwrap.blank .mo{border-left:0}
+.gridwrap.blank label.row{display:none}
+.grid-empty{display:grid;justify-items:center;align-content:center;gap:14px;min-height:380px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.grid-empty>svg{width:56px;height:36px}.grid-empty>svg circle{mix-blend-mode:multiply}
+.grid-empty p{margin:0;color:var(--muted)}
+.plist{border-top:1px solid var(--line)}
+.pl{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:12px 0;border-bottom:1px solid var(--line)}
+.pl>div{display:grid;gap:2px}.pl>div:last-child{text-align:right;flex:none}
+.pl b{font-weight:700}.pl span{font-size:14px;color:var(--muted)}
+.bub .eg{display:block;margin-top:4px;color:var(--muted)}
+/* date picker */
+.datebtn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:48px;padding:0 14px 0 16px;border:1px solid var(--input-border);border-radius:12px;background:var(--card);font-size:16px;font-variant-numeric:tabular-nums;text-align:left}
+.datebtn svg{width:18px;height:18px;flex:none}
+.datebtn[aria-expanded="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 .5px var(--ink)}
+.dp{position:fixed;z-index:15;width:316px;background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:18px;box-shadow:0 10px 32px rgba(25,25,25,.12)}
+.dp-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dp-h b{flex:1;text-align:center;font-family:var(--display);font-weight:500;font-size:19px;font-variant-numeric:tabular-nums}
+.dp-g{display:grid;grid-template-columns:repeat(7,40px);row-gap:2px}
+.dp-g span{height:32px;display:grid;place-content:center;font-size:13px;color:var(--muted);font-weight:500}
+.dp-g button{width:40px;height:40px;border-radius:50%;border:1px solid transparent;background:none;font-size:15px;font-variant-numeric:tabular-nums}
+.dp-g button:hover{background:var(--bg)}
+.dp-g button.out{color:var(--placeholder)}
+.dp-g button.today{background:var(--today-bg);font-weight:700}
+.dp-g button[aria-pressed="true"]{background:var(--selected-bg);border-color:var(--ink);box-shadow:inset 0 0 0 .5px var(--ink);font-weight:700}
+.dp-f{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+/* dialog + toast */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;padding:16px;z-index:10}
+.dlg{background:var(--card);border-radius:24px;padding:32px;width:min(560px,100%);max-height:calc(100% - 32px);overflow:auto;display:flex;flex-direction:column;gap:18px}
+.dlg .acts{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.days{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;top:16px;left:calc(248px + (100% - 248px)/2);transform:translateX(-50%);display:inline-flex;align-items:center;gap:16px;max-width:min(620px,calc(100% - 296px));background:var(--card);color:var(--ink);border:1px solid var(--card-border);border-radius:999px;padding:12px 56px 12px 24px;border-radius:999px;font-size:16px;font-weight:700;line-height:25px;letter-spacing:.04em;box-shadow:0 4px 16px rgba(25,25,25,.08);z-index:20;animation:toast-in .2s ease-out}
+.toast .ti{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-content:center;background:var(--live-bg);color:var(--live)}
+.toast .ti svg{width:22px;height:22px}
+.toast small{display:block;font-size:13px;font-weight:400;color:var(--muted);line-height:20px;letter-spacing:.03em;margin-top:1px}
+.toast.off{border-color:var(--input-border)}.toast.off .ti{background:var(--soft);color:var(--muted)}
+.toast.warn .ti{background:var(--warn-bg);color:var(--warn)}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (max-width:760px){.toast{left:50%;top:auto;bottom:16px;max-width:calc(100% - 32px)}}
+.err{color:var(--danger);font-size:14px;font-weight:500;margin:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;height:168px}
+.top>div:first-child{min-width:0}
+.top h1,.top .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.motif{flex:none;height:84px;width:auto}
+.motif circle,.mark circle,.empty circle{mix-blend-mode:multiply}
+.brand{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;width:100%;overflow:hidden}
+.mark{width:26px;height:26px}
+.empty{display:flex;align-items:center;gap:14px;padding:14px 12px;color:var(--muted)}
+.empty svg{width:56px;height:36px;flex:none}
+.burst{position:fixed;left:0;top:0;pointer-events:none;z-index:30}
+.burst i{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;mix-blend-mode:multiply;animation:pop .7s ease-out forwards}
+@keyframes pop{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--x),var(--y)) scale(1.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){.burst{display:none}}
+@media (max-width:1100px){.home,.focus,.set{grid-template-columns:1fr}.prow{grid-template-columns:1fr}}
+@media (max-width:760px){.app{flex-direction:column}.side{width:auto;border-right:0;border-bottom:1px solid var(--line);padding:14px 16px}.brand{margin-bottom:10px}.nav{flex-direction:row;overflow-x:auto}.nav button{flex:none}.side-foot{display:none}.top{padding:20px 16px 12px;height:auto}.top h1,.top .sub{white-space:normal}.motif{height:52px}h1{font-size:30px}.body{padding:4px 16px 28px}.card{padding:20px}.rec{grid-template-columns:1fr auto}.rec span:first-child{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <button class="brand" data-act="home" aria-label="CampusFlow 처음 상태로 돌아가기" title="처음 상태로 돌아가기"><svg class="mark" viewBox="0 0 30 30" aria-hidden="true"><circle cx="11" cy="12" r="10" fill="#0155BF"/><circle cx="19" cy="18" r="10" fill="#FFCE52"/></svg><b>CampusFlow</b><span class="tag">YOUR CAMPUS, IN SYNC</span></button>
+    <nav class="nav" id="nav" aria-label="메뉴"></nav>
+    <div class="side-foot"><b id="term"></b>조금 더 여유로운 대학 생활
+      <div class="proto"><div class="proto-h"><b>프로토타입</b><span id="ai-note" class="ai">AI 확인 중</span></div><p>넣은 내용은 이 브라우저에만 저장돼요.</p></div></div>
+  </aside>
+  <main class="main">
+    <header class="top"><div><div class="eyebrow" id="eyebrow"></div><h1 id="title"></h1><p class="sub" id="subtitle"></p></div><div id="motif" aria-hidden="true"></div></header>
+    <div class="body" id="view"></div>
+  </main>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="neon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#39FF14"/><stop offset=".18" stop-color="#00E5FF"/><stop offset=".42" stop-color="#B84DFF"/><stop offset="1" stop-color="#E23BE8"/><animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5" dur="3s" repeatCount="indefinite"/></linearGradient></defs></svg>
+<div id="layer"></div>
+<div id="dplayer"></div>
+<input type="file" id="file" accept=".txt,.md,.pdf,text/plain,application/pdf,image/*" hidden>
+<script>
+"use strict";
+/* ---------- 도우미 ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const monday=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const w=(x.getDay()+6)%7;return addDays(x,-w)};
+const DOW=["일","월","화","수","목","금","토"];
+const TODAY=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+const SEM_START=new Date(2026,7,31);
+const semWeek=d=>Math.floor((monday(d)-SEM_START)/(7*864e5))+1;
+const weekLabel=d=>{const w=semWeek(d);return w>=1&&w<=16?`2학기 ${w}주차`:"학기 외"};
+const hm=h=>`${pad(Math.floor(h))}:${pad(Math.round((h%1)*60))}`;
+const dur=ms=>{const s=Math.floor(ms/1000);return `${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`};
+const durK=ms=>{const m=Math.max(1,Math.round(ms/6e4));const h=Math.floor(m/60);return h?`${h}시간${m%60?` ${m%60}분`:""}`:`${m}분`};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const I={
+ calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ list:'<path d="m3 17 2 2 4-4M3 7l2 2 4-4M13 6h8M13 12h8M13 18h8"/>',
+ sparkles:'<path d="M9.9 4.1 12 10l5.9 2.1L12 14.2 9.9 20 7.8 14.2 2 12.1 7.8 10z"/><path d="M19 3v4M17 5h4"/>',
+ book:'<path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+ settings:'<path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ plus:'<path d="M5 12h14M12 5v14"/>',left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',
+ arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',clip:'<path d="m21.4 11.1-9.2 9.2a6 6 0 0 1-8.5-8.5l8.6-8.6a4 4 0 0 1 5.7 5.7l-8.6 8.5a2 2 0 0 1-2.8-2.8l8.5-8.5"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ bell:'<path d="M10.3 21a2 2 0 0 0 3.4 0M3.3 15.3A1 1 0 0 0 4 17h16a1 1 0 0 0 .7-1.7C19.4 14 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.4 6-2.7 7.3"/>',
+ belloff:'<path d="M10.3 21a2 2 0 0 0 3.4 0M17 17H4a1 1 0 0 1-.7-1.7C4.6 14 6 12.5 6 8a6 6 0 0 1 .3-1.7M8.7 3a6 6 0 0 1 9.3 5c0 2.6.5 4.2 1.1 5.4M2 2l20 20"/>',
+ undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+ alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+ download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>'
+};
+const CUT='style="stroke:var(--soft)"';
+const IF={
+ calendar:`<rect x="3" y="4" width="18" height="18" rx="2" fill="currentColor"/><path d="M16 2v4M8 2v4"/><path d="M3.5 10h17" ${CUT}/>`,
+ list:`<rect x="2.5" y="3.5" width="7" height="7" rx="2" fill="currentColor"/><rect x="2.5" y="13.5" width="7" height="7" rx="2" fill="currentColor"/><path d="M13 7h8M13 17h8"/><path d="m4.4 7 1.2 1.2 2-2.2M4.4 17l1.2 1.2 2-2.2" ${CUT} stroke-width="1.6"/>`,
+ sparkles:`<path d="M9.9 4.1 12 10l5.9 2.1L12 14.2 9.9 20 7.8 14.2 2 12.1 7.8 10z" fill="currentColor"/><path d="M19 3v4M17 5h4"/>`,
+ book:`<path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" fill="currentColor"/><path d="M12 7.5v13" ${CUT}/>`,
+ clock:`<circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 6.5V12l3.5 2" ${CUT}/>`,
+ settings:`<path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z" fill="currentColor"/><circle cx="12" cy="12" r="3" style="fill:var(--soft);stroke:var(--soft)"/>`};
+const icf=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IF[n]||I[n]}</svg>`;
+const ic=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+
+const PAL=["var(--p1)","var(--p2)","var(--p3)","var(--p4)","var(--p5)"];
+const dots=(arr,w,h,cls)=>`<svg class="${cls}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${arr.map(([x,y,r,c])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${PAL[c%5]}"/>`).join("")}</svg>`;
+const ring=(n,R,r,cx,cy,from=0,span=360,grow=0)=>Array.from({length:n},(_,i)=>{const a=(from+span*i/(span===360?n:n-1))*Math.PI/180;return [Math.round(cx+R*Math.sin(a)),Math.round(cy-R*Math.cos(a)),r+grow*i,i]});
+const MOTIF={
+ timetable:[[24,34,22,0],[56,50,22,1],[88,34,22,2],[120,50,22,3],[152,34,22,4]],
+ tasks:[[24,44,18,2],[50,64,18,3],[78,44,18,1],[106,24,18,0],[134,10,10,4]].map(([x,y,r,c])=>[x+10,y+4,r,c]),
+ assistant:[[40,30,26,0],[74,52,26,1],[108,30,26,2],[142,52,26,3]],
+ planner:[[18,62,10,3],[44,56,14,1],[76,48,18,2],[114,40,22,4],[156,34,26,0]],
+ focus:[[56,60,22,0],[92,60,22,1],[128,60,22,2],[74,28,22,3],[110,28,22,4]],
+ prefs:ring(6,24,16,90,42)};
+const motif=v=>dots(MOTIF[v],184,84,"motif");
+const empty=t=>`<div class="empty">${dots([[14,18,12,0],[30,20,12,1],[44,16,10,2]],56,36,"")}<span>${t}</span></div>`;
+let lastXY=[0,0];
+function burst(){const [x,y]=lastXY;const b=document.createElement("div");b.className="burst";b.style.transform=`translate(${x}px,${y}px)`;
+  b.innerHTML=Array.from({length:10},(_,i)=>{const a=i/10*2*Math.PI,d=46+(i%3)*18;return `<i style="background:${PAL[i%5]};--x:${Math.round(Math.cos(a)*d)}px;--y:${Math.round(Math.sin(a)*d)}px"></i>`}).join("");
+  document.body.appendChild(b);setTimeout(()=>b.remove(),800)}
+/* ---------- 상태 ---------- */
+const KEY="campusflow-v3";
+function seed(){
+  const t=TODAY(), rel=n=>ymd(addDays(t,n)), mon=monday(t);
+  return {
+    courses:[
+      {id:"c1",name:"자료구조",days:[1,3],start:9,end:11,room:"공학관 201호",credits:3,color:1},
+      {id:"c2",name:"운영체제",days:[2,4],start:10,end:12,room:"공학관 302호",credits:3,color:2},
+      {id:"c3",name:"데이터사이언스",days:[1,3],start:13,end:15,room:"정보관 104호",credits:3,color:4},
+      {id:"c4",name:"대학 글쓰기",days:[5],start:10,end:12,room:"인문관 205호",credits:3,color:3}],
+    tasks:[
+      {id:"t1",title:"연결 리스트 구현 과제",course:"자료구조",kind:"과제",due:rel(-3),hours:3,done:false},
+      {id:"t2",title:"비평 에세이 제출",course:"대학 글쓰기",kind:"과제",due:rel(2),hours:2,done:false},
+      {id:"t3",title:"중간고사 준비",course:"운영체제",kind:"시험",due:rel(4),hours:5,done:true},
+      {id:"t4",title:"회귀 분석 보고서",course:"데이터사이언스",kind:"과제",due:rel(6),hours:3,done:false},
+      {id:"t5",title:"쪽지 시험",course:"운영체제",kind:"시험",due:rel(-1),hours:1,done:false}],
+    blocks:[
+      {id:"b1",date:ymd(addDays(mon,0)),start:15,end:16,title:"자료구조 과제",subject:"자료구조",taskId:"t1"},
+      {id:"b2",date:ymd(addDays(mon,4)),start:13,end:14,title:"비평 에세이",subject:"대학 글쓰기",taskId:"t2"},
+      {id:"b3",date:ymd(addDays(mon,1)),start:13,end:15,title:"쪽지 시험 대비",subject:"운영체제",taskId:"t5"},
+      {id:"b4",date:ymd(addDays(mon,3)),start:15,end:17,title:"회귀 분석 보고서",subject:"데이터사이언스",taskId:"t4"}],
+    cancels:[], subjects:[], importance:{}, planStart:ymd(t),
+    chat:[{role:"bot",text:"어떤 과제나 시험을 추가할까요? 예: 오늘 일정에 컴퓨터 프로그래밍 과제 넣어줘"}],
+    draft:"",
+    focus:{subject:null,running:false,startedAt:0,acc:0,sessionStart:0},
+    records:[
+      {subject:"자료구조",start:Date.now()-5*36e5,end:Date.now()-5*36e5+50*6e4},
+      {subject:"데이터사이언스",start:Date.now()-26*36e5,end:Date.now()-26*36e5+30*6e4}],
+    settings:{alarm:false,days:5,time:"09:00",from:9,to:19}, inbox:[],
+    ui:{view:"timetable",mode:"week",date:ymd(t),week:ymd(mon),month:ymd(new Date(t.getFullYear(),t.getMonth(),1)),showStudy:true}
+  };
+}
+function blank(){const s=seed();return {...s,courses:[],tasks:[],blocks:[],records:[]}}
+const isBlank=()=>!S.courses.length&&!S.tasks.length&&!S.blocks.length;
+let S;
+function load(){try{const r=localStorage.getItem(KEY);if(r){S=JSON.parse(r);if(!S.ui||!S.courses)throw 0;return}}catch(e){}S=blank()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+load();
+if(!S.ui.date)S.ui.date=ymd(TODAY());
+function setDate(d){S.ui.date=ymd(d);S.ui.week=ymd(monday(d));S.ui.month=ymd(new Date(d.getFullYear(),d.getMonth(),1));save()}
+let dialog=null, toastT=null, tick=null;
+let AI=null, aiBusy=false, planBusy=false, pendingImg=null;
+S.chat=S.chat.filter(m=>!m.pending);
+function aiNote(){const e=$("#ai-note");if(e){e.innerHTML=ic("sparkles")+(AI?"AI 연결됨":"AI 미연결");e.className="ai"+(AI?" on":"");e.title=AI?"AI가 공지와 강의계획서를 읽어요":"정해진 형식만 알아들어요"}}
+function connectAI(){try{if(window.claude&&window.claude.use)window.claude.use("sample").then(x=>{AI=x||null;aiNote();if(S.ui.view==="assistant"||S.ui.view==="planner")render()},()=>{AI=null;aiNote()});else aiNote()}catch(e){aiNote()}}
+
+/* ---------- 공통 계산 ---------- */
+const VIEWS=[["timetable","내 시간표","calendar"],["tasks","과제 · 시험","list"],["assistant","AI 도우미","sparkles"],["planner","AI 플래너","book"],["focus","순공 시간","clock"],["prefs","설정","settings"]];
+const HEAD={timetable:["이번 주를 한눈에.","수업과 마감, 공부 계획을 한 화면에서 확인해요."],tasks:["마감 전에, 여유 있게.",""],assistant:["말하면, 일정에 반영해요.","공지와 강의계획서를 붙여 넣으면 일정 후보를 정리해 드려요."],planner:["일정 정리는 플래너에게.",""],focus:["공부한 시간만, 차곡차곡.",""],prefs:["나에게 맞춰 설정하세요.",""]};
+const courseOf=n=>S.courses.find(c=>c.name===n);
+function taskState(t){
+  if(t.done)return{k:"done",label:"완료",cls:"gray"};
+  const d=Math.round((pd(t.due)-TODAY())/864e5);
+  if(d<0)return t.kind==="시험"?{k:"ended",label:"종료",cls:"gray"}:{k:"over",label:`${-d}일 지남`,cls:"over"};
+  if(d<=3)return{k:"soon",label:d===0?"오늘 마감":`D-${d}`,cls:"soon"};
+  return{k:"todo",label:"",cls:""};
+}
+const pending=()=>S.tasks.filter(t=>{const k=taskState(t).k;return k!=="done"&&k!=="ended"});
+const allSubjects=()=>[...S.courses.map(c=>c.name),...S.subjects];
+function toast(m,kind,sub){clearTimeout(toastT);if(!kind)kind=/못|없어요|만 첨부|이하|뒤에/.test(m)?"warn":"ok";
+  const map={ok:["","check"],on:["","bell"],off:["off","belloff"],undo:["off","undo"],warn:["warn","alert"]}[kind];
+  const l=$("#toast")||Object.assign(document.createElement("div"),{id:"toast"});l.className="toast "+map[0];l.setAttribute("role","status");
+  l.innerHTML=`<span class="ti">${ic(map[1])}</span><span>${esc(m)}${sub?`<small>${esc(sub)}</small>`:""}</span>`;document.body.appendChild(l);toastT=setTimeout(()=>l.remove(),3000)}
+function go(v){S.ui.view=v;save();try{if(location.hash!=="#"+v)location.hash=v}catch(e){}render()}
+function elapsed(){const f=S.focus;return f.acc+(f.running?Date.now()-f.startedAt:0)}
+function plannedMs(from,to){return S.blocks.filter(b=>b.date>=from&&b.date<=to).reduce((a,b)=>a+(b.end-b.start)*36e5,0)}
+function recMs(from,to,subj){return S.records.filter(r=>{const d=ymd(new Date(r.end));return d>=from&&d<=to&&(!subj||r.subject===subj)}).reduce((a,r)=>a+(r.end-r.start),0)}
+
+function lag(){const t=TODAY(),ws=ymd(monday(t)),ys=ymd(addDays(t,-1)),ts=ymd(t);if(ys<ws)return[];
+  const by={};for(const b of S.blocks)if(b.date>=ws&&b.date<=ys&&!b.settled)by[b.subject]=(by[b.subject]||0)+(b.end-b.start);
+  return Object.entries(by).map(([subject,planned])=>{const done=recMs(ws,ts,subject)/36e5;return{subject,planned,done,short:Math.round(planned-done)}}).filter(x=>x.short>=1)}
+function isBusy(ds,h){const dw=pd(ds).getDay();return S.courses.some(c=>c.days.includes(dw)&&h>=c.start&&h<c.end&&!S.cancels.some(x=>x.course===c.name&&x.date===ds))||S.blocks.some(b=>b.date===ds&&h>=b.start&&h<b.end)}
+function makeup(){const L=lag(),t=TODAY(),ts=ymd(t),ws=ymd(monday(t)),nowH=new Date().getHours();let placed=0,miss=0;
+  for(const x of L){let need=x.short;
+    for(let i=0;i<=7&&need>0;i++){const d=addDays(t,i),dw=d.getDay();if(dw===0||dw===6)continue;const ds=ymd(d);let per=0;
+      for(let h=S.settings.from;h<S.settings.to&&need>0&&per<2;h++){if(i===0&&h<=nowH)continue;if(isBusy(ds,h))continue;
+        const prev=S.blocks.find(b=>b.makeup&&b.subject===x.subject&&b.date===ds&&b.end===h);
+        if(prev)prev.end=h+1;else S.blocks.push({id:uid(),date:ds,start:h,end:h+1,title:`${x.subject} 보충`,subject:x.subject,makeup:true});need--;per++;placed++}}
+    miss+=need;S.blocks.forEach(b=>{if(b.subject===x.subject&&b.date>=ws&&b.date<ts&&!b.makeup)b.settled=true})}
+  save();return{placed,miss}}
+function loadScript(src){return new Promise((res,rej)=>{const e=document.createElement("script");e.src=src;e.onload=res;e.onerror=rej;document.head.appendChild(e)})}
+async function readPdf(f){toast("PDF를 읽는 중이에요…");
+  try{const base="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+    if(!window.pdfjsLib)await loadScript(base+"pdf.min.js");
+    if(!window.pdfjsWorker){try{await loadScript(base+"pdf.worker.min.js")}catch(e){}}
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc=base+"pdf.worker.min.js";
+    const doc=await window.pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let out="";
+    for(let i=1;i<=Math.min(doc.numPages,10)&&out.length<6000;i++){const pg=await doc.getPage(i),c=await pg.getTextContent();out+=c.items.map(x=>x.str).join(" ")+"\n"}
+    out=out.replace(/[ \t]+/g," ").trim();
+    if(!out){toast("PDF에서 글자를 찾지 못했어요. 스캔본이면 이미지로 첨부해 주세요");return}
+    S.draft=out.slice(0,6000);save();if(S.ui.view==="assistant")render();toast(`${f.name} 내용을 입력칸에 넣었어요. 확인하고 [보내기]를 누르세요`)}
+  catch(e){toast("PDF를 읽지 못했어요. 내용을 글로 붙여 넣어 주세요")}}
+let briefBusy=false;
+async function aiBrief(){if(!AI||briefBusy)return;briefBusy=true;render();const t=TODAY();
+  try{const r=await AI(`대학생 플래너의 아침 브리핑을 쓴다. 아래 데이터만 근거로, 오늘 무엇부터 하면 좋을지 한국어 해요체 2~3문장으로 쓴다. 목록이나 머리말 없이 문장만 쓴다. 없는 일정을 지어내지 않는다.
+오늘: ${ymd(t)} (${DOW[t.getDay()]}요일)
+오늘 수업: ${JSON.stringify(S.courses.filter(c=>c.days.includes(t.getDay())).map(c=>`${c.name} ${c.start}~${c.end}시`))}
+오늘 공부 계획: ${JSON.stringify(S.blocks.filter(b=>b.date===ymd(t)).map(b=>`${b.title} ${b.start}~${b.end}시`))}
+남은 과제·시험: ${JSON.stringify(pending().map(x=>({title:x.title,course:x.course,due:x.due,state:taskState(x).label||"여유"})))}
+이번 주 밀린 공부: ${JSON.stringify(lag().map(x=>`${x.subject} ${x.short}시간`))}`,{cache:false,modelTier:"quick"});
+    S.brief={date:ymd(t),text:String(r.text||"").trim().slice(0,400)};save()}
+  catch(e){if(e&&e.code==="not_granted"){AI=null;aiNote()}toast("브리핑을 받지 못했어요. 잠시 뒤 다시 시도해 주세요")}
+  briefBusy=false;render()}
+/* ---------- 렌더 ---------- */
+function render(){
+  closeDp();const v=S.ui.view,t=TODAY();
+  $("#nav").innerHTML=VIEWS.map(([k,l,i])=>`<button data-act="go" data-v="${k}" ${k===v?'aria-current="page"':""}>${k===v?icf(i):ic(i)}${l}</button>`).join("");
+  $("#term").textContent=`${t.getFullYear()}년 · 2학기`;
+  $("#eyebrow").textContent=`${t.getFullYear()}년 ${t.getMonth()+1}월 ${t.getDate()}일 ${DOW[t.getDay()]}요일 · ${weekLabel(t)}`;
+  $("#motif").innerHTML=motif(v);$("#title").textContent=HEAD[v][0];$("#subtitle").textContent=statusLine(v);aiNote();
+  const el=$("#view");const keep=v==="assistant"?null:el.scrollTop;
+  el.innerHTML=({timetable:vTimetable,tasks:vTasks,assistant:vAssistant,planner:vPlanner,focus:vFocus,prefs:vPrefs})[v]();
+  el.style.overflow=v==="assistant"?"hidden":"auto";
+  if(keep!==null)el.scrollTop=keep;
+  if(v==="assistant"){const m=$("#msgs");if(m)m.scrollTop=m.scrollHeight}
+  clearInterval(tick);
+  if(v==="focus"&&S.focus.running)tick=setInterval(()=>{const e=$("#timer");if(e)e.textContent=dur(elapsed())},500);
+  renderDialog();
+}
+function statusLine(v){const t=TODAY(),ts=ymd(t),ws=ymd(monday(t)),we=ymd(addDays(monday(t),6)),k=ms=>ms?durK(ms):"0분";
+  if(v==="timetable")return briefing();
+  if(v==="tasks"){if(!S.tasks.length)return "아직 등록한 과제나 시험이 없어요.";const n=pending().length,soon=S.tasks.filter(x=>taskState(x).k==="soon").length,over=S.tasks.filter(x=>taskState(x).k==="over").length;
+    const p=[`남은 일정 ${n}건`];if(soon)p.push(`3일 안 마감 ${soon}건`);if(over)p.push(`지난 과제 ${over}건`);return p.join(" · ")}
+  if(v==="assistant")return AI?"AI가 연결되어 있어요.":"AI가 연결되지 않았어요.";
+  if(v==="planner"){const pw=plannedMs(ws,we);return pw?`이번 주 공부 계획 ${k(pw)}`:"아직 만든 공부 계획이 없어요."}
+  if(v==="focus")return `오늘 순공 ${k(recMs(ts,ts))} · 이번 주 ${k(recMs(ws,we))}`;
+  return `알림 ${S.settings.alarm?"켜짐":"꺼짐"} · 공부 시간 ${hm(S.settings.from)}~${hm(S.settings.to)}`}
+function briefing(){const t=TODAY(),ts=ymd(t);
+  if(isBlank())return "아직 등록한 강의나 마감이 없어요.";
+  const nc=S.courses.filter(c=>c.days.includes(t.getDay())&&!S.cancels.some(x=>x.course===c.name&&x.date===ts)).length;
+  const soon=S.tasks.filter(x=>taskState(x).k==="soon").length,over=S.tasks.filter(x=>taskState(x).k==="over").length;
+  const p=[nc?`오늘 수업 ${nc}개`:"오늘은 수업이 없어요"];if(soon)p.push(`3일 안 마감 ${soon}건`);if(over)p.push(`지난 과제 ${over}건`);if(!soon&&!over)p.push("급한 마감은 없어요");const os=outOfSync().n;if(os)p.push(`어긋난 공부 계획 ${os}건`);return p.join(" · ")}
+const fmtD=v=>v?v.replace(/-/g,". ")+".":"날짜 선택";
+const dateField=(id,value,label)=>`<input type="hidden" id="${id}" value="${value||""}"><button type="button" class="datebtn" id="${id}-btn" data-act="dp-open" data-id="${id}" aria-haspopup="dialog" aria-expanded="false" aria-label="${label} ${fmtD(value)} 바꾸기"><span>${fmtD(value)}</span>${ic("calendar")}</button>`;
+let dp=null;
+function openDp(id){const b=$("#"+id+"-btn"),v=$("#"+id).value||ymd(TODAY()),d=pd(v);dp={id,value:$("#"+id).value,month:ymd(new Date(d.getFullYear(),d.getMonth(),1))};renderDp();b.setAttribute("aria-expanded","true")}
+function closeDp(){if(!dp)return;const b=$("#"+dp.id+"-btn");if(b)b.setAttribute("aria-expanded","false");dp=null;$("#dplayer").innerHTML=""}
+function renderDp(){const L=$("#dplayer");if(!dp){L.innerHTML="";return}
+  const b=$("#"+dp.id+"-btn");if(!b){dp=null;L.innerHTML="";return}
+  const f=pd(dp.month),start=addDays(f,-f.getDay()),ts=ymd(TODAY());
+  const cells=Array.from({length:42},(_,i)=>addDays(start,i));
+  L.innerHTML=`<div class="dp" role="dialog" aria-label="날짜 고르기"><div class="dp-h"><button class="btn m secondary icon" data-act="dp-nav" data-n="-1" aria-label="이전 달">${ic("left")}</button><b aria-live="polite">${f.getFullYear()}년 ${f.getMonth()+1}월</b><button class="btn m secondary icon" data-act="dp-nav" data-n="1" aria-label="다음 달">${ic("right")}</button></div>
+   <div class="dp-g">${DOW.map(x=>`<span>${x}</span>`).join("")}${cells.map(d=>{const ds=ymd(d);return `<button class="${d.getMonth()!==f.getMonth()?"out":""} ${ds===ts?"today":""}" aria-pressed="${ds===dp.value}" data-act="dp-pick" data-date="${ds}" aria-label="${d.getMonth()+1}월 ${d.getDate()}일${ds===ts?" 오늘":""}">${d.getDate()}</button>`}).join("")}</div>
+   <div class="dp-f"><span class="muted small">${dp.value?fmtD(dp.value):""}</span><button class="btn m tertiary" data-act="dp-today" aria-label="오늘이 있는 달로 이동">오늘</button></div></div>`;
+  const el=L.firstChild,r=b.getBoundingClientRect(),w=316,h=el.offsetHeight||380,vw=window.innerWidth,vh=window.innerHeight;
+  let x=r.left,y=r.bottom+8;if(x+w>vw-12)x=Math.max(12,r.right-w);if(y+h>vh-12)y=Math.max(12,r.top-h-8);el.style.left=x+"px";el.style.top=y+"px"}
+function pickDate(v){const id=dp.id;$("#"+id).value=v;const b=$("#"+id+"-btn");closeDp();
+  if(id==="jump"){setDate(pd(v));render();return}
+  if(id==="planStart"){S.planStart=v;save()}
+  if(b){b.querySelector("span").textContent=fmtD(v);b.focus()}}
+function taskRow(t,withEdit){
+  const st=taskState(t);
+  return `<div class="task ${st.k==="done"?"done":""} ${st.k==="ended"?"ended":""}">
+   <input type="checkbox" class="cb" id="cb-${t.id}-${withEdit?1:0}" data-act="toggle" data-id="${t.id}" ${t.done?"checked":""} ${st.k==="ended"?"disabled":""} aria-label="${esc(t.title)} 완료">
+   <div class="grow"><div class="row" style="gap:8px"><span class="tt">${esc(t.title)}</span>${st.label?`<span class="badge ${st.cls}">${st.label}</span>`:""}</div>
+   <div class="meta">${esc(t.course)} · ${t.kind}</div><div class="meta">${t.due} 마감 · 예상 ${t.hours}시간</div></div>
+   ${withEdit?`<button class="btn m tertiary edit" data-act="task-edit" data-id="${t.id}">수정</button>`:""}</div>`;
+}
+function vTimetable(){
+  const u=S.ui,t=TODAY(),ts=ymd(t);
+  const up=[...S.tasks].filter(x=>!x.done&&taskState(x).k!=="ended").sort((a,b)=>a.due<b.due?-1:1).slice(0,3);
+  let grid="";
+  if(u.mode==="week"){
+    const m=pd(u.week),H0=9,H1=19,RH=56;
+    const days=[0,1,2,3,4].map(i=>addDays(m,i));
+    grid=`<div class="row between" style="margin-top:20px"><div class="row">
+      <button class="btn m secondary icon" data-act="week" data-n="-1" aria-label="이전 주">${ic("left")}</button>
+      <b>${ymd(m)}~${ymd(addDays(m,6))} · ${weekLabel(m)}</b>
+      <button class="btn m secondary icon" data-act="week" data-n="1" aria-label="다음 주">${ic("right")}</button></div>
+      <button class="btn m secondary" data-act="today">오늘</button></div>
+     <label class="row" style="margin-top:16px;gap:10px"><input type="checkbox" class="cb" id="showStudy" data-act="show-study" ${u.showStudy?"checked":""}><b>공부 계획 함께 보기</b><span class="muted small">점선 블록이 공부 계획이에요.</span></label>
+     <div class="wk"><div></div>${days.map(d=>`<div class="dh ${ymd(d)===ts?"today":""}">${DOW[d.getDay()]}<small>${d.getDate()}일${ymd(d)===ts?" · 오늘":""}</small></div>`).join("")}
+      <div class="times" style="height:${(H1-H0)*RH}px">${Array.from({length:H1-H0+1},(_,i)=>`<span style="top:${i*RH}px">${pad(H0+i)}:00</span>`).join("")}</div>
+      ${days.map(d=>{const ds=ymd(d),dw=d.getDay();
+        const cls=S.courses.filter(c=>c.days.includes(dw)).map(c=>{const off=S.cancels.some(x=>x.course===c.name&&x.date===ds);
+          return `<button class="blk c${c.color} ${off?"off":""}" style="top:${(c.start-H0)*RH+1}px;height:${(c.end-c.start)*RH-1}px" data-act="course" data-id="${c.id}" data-date="${ds}"><b>${esc(c.name)}${off?" (휴강)":""}</b><strong>${hm(c.start)}~${hm(c.end)}</strong>${esc(c.room)}</button>`}).join("");
+        const st=u.showStudy?S.blocks.filter(b=>b.date===ds).map(b=>`<button class="blk study" style="top:${(b.start-H0)*RH+1}px;height:${(b.end-b.start)*RH-1}px" data-act="block" data-id="${b.id}"><b>공부 · ${esc(b.title)}</b>${hm(b.start)}~${hm(b.end)}</button>`).join(""):"";
+        return `<div class="col ${ds===ts?"today":""}" style="height:${(H1-H0)*RH}px">${cls}${st}</div>`}).join("")}</div>`;
+  }else{
+    const f=pd(u.month),start=addDays(f,-f.getDay());
+    const cells=Array.from({length:42},(_,i)=>addDays(start,i)).filter((d,i)=>i<35||d.getMonth()===f.getMonth()||i%7!==0&&false||i<42);
+    grid=`<div class="row between" style="margin-top:20px"><div class="row">
+      <button class="btn m secondary icon" data-act="month" data-n="-1" aria-label="이전 달">${ic("left")}</button>
+      <b>${f.getFullYear()}년 ${f.getMonth()+1}월</b>
+      <button class="btn m secondary icon" data-act="month" data-n="1" aria-label="다음 달">${ic("right")}</button></div>
+      <button class="btn m secondary" data-act="today">오늘</button></div>
+     <div class="mo">${DOW.map(d=>`<div class="mh">${d}</div>`).join("")}${cells.map(d=>{const ds=ymd(d),dw=d.getDay();
+       const nc=S.courses.filter(c=>c.days.includes(dw)&&!S.cancels.some(x=>x.course===c.name&&x.date===ds)).length;
+       const nt=S.tasks.filter(x=>x.due===ds).length,nb=S.blocks.filter(b=>b.date===ds).length;
+       return `<button class="${d.getMonth()!==f.getMonth()?"out":""} ${ds===ts?"today":""}" ${ds===u.date?'style="box-shadow:inset 0 0 0 2px var(--ink)"':""} data-act="day" data-date="${ds}" aria-label="${ds} 일정 보기"><b>${d.getDate()}</b>${nc?`<span>수업 ${nc}</span>`:""}${nt?`<span style="color:var(--danger);font-weight:700">마감 ${nt}</span>`:""}${nb?`<span class="muted">공부 ${nb}</span>`:""}</button>`}).join("")}</div>`;
+  }
+  return `<div class="home ${isBlank()?"solo":""}"><section class="card">
+    <div class="row between"><h2>내 시간표</h2><button class="btn secondary" data-act="course-add">${ic("plus")}강의 추가</button></div>
+    <div class="row between" style="margin-top:18px"><div class="tabs" role="tablist">
+      <button role="tab" aria-selected="${u.mode==="week"}" data-act="mode" data-m="week">주간</button>
+      <button role="tab" aria-selected="${u.mode==="month"}" data-act="mode" data-m="month">월간</button></div>
+      <div class="row" style="gap:10px;flex-wrap:nowrap"><b class="small">날짜 이동</b><div style="width:190px">${dateField("jump",u.date,"날짜 이동")}</div></div></div>
+    <div class="gridwrap ${isBlank()?"blank":""}">${grid}${isBlank()?`<div class="grid-empty">${dots([[14,18,12,0],[30,20,12,1],[44,16,10,2]],56,36,"")}<p>아직 비어 있어요.<br>강의계획서를 AI 도우미에 붙여 넣으면 강의와 마감이 한 번에 들어가요.</p><div style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px"><button class="btn m primary" data-act="go" data-v="assistant">AI 도우미에게 말하기${ic("arrow")}</button><button class="btn m secondary" data-act="fill-sample">예시 데이터로 채우기</button></div></div>`:""}</div></section>
+   ${isBlank()?"":`<div class="rightcol"><section class="card"><h2>다가오는 마감</h2>
+     <div style="margin:10px -12px 4px">${up.length?up.map(x=>taskRow(x,false)).join(""):empty("남은 마감이 없어요. 여유 있는 한 주예요.")}</div>
+     ${S.tasks.length?`<div style="text-align:center"><button class="btn tertiary" data-act="go" data-v="tasks">전체 과제 보기${ic("arrow")}</button></div>`:""}</section>
+    <section class="card"><div class="row between" style="flex-wrap:nowrap"><h2>AI 도우미</h2><span class="sticker" aria-hidden="true"><i style="left:0;top:0;background:#0155BF"></i><i style="left:17px;top:12px;background:#FFCE52"></i><i style="left:34px;top:0;background:#0E9972"></i><i style="left:51px;top:12px;background:#9CC355"></i></span></div>
+     <div style="height:18px"></div>
+     <button class="btn primary" style="width:100%" data-act="go" data-v="assistant">AI 도우미에게 말하기${ic("arrow")}</button>${outOfSync().n?`<button class="btn secondary" style="width:100%;margin-top:10px" data-act="resync-ask">공부 계획 다시 맞추기</button>`:""}
+     ${0?`<div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">${S.brief&&S.brief.date===ts?`<div class="label muted">오늘 브리핑</div><p style="margin:0 0 8px">${esc(S.brief.text)}</p>`:""}<button class="btn m tertiary" data-act="brief" ${briefBusy?"disabled":""}>${briefBusy?"쓰는 중…":S.brief&&S.brief.date===ts?"브리핑 다시 받기":"오늘 브리핑 받기"}</button></div>`:""}</section></div>`}</div>`;
+}
+function vTasks(){
+  const list=[...S.tasks].sort((a,b)=>a.due<b.due?-1:1);
+  return `<section class="card"><div class="row between"><div><h2>과제와 시험, 놓치지 않도록.</h2></div>
+    <div class="row"><button class="btn secondary" data-act="task-add">${ic("plus")}직접 추가</button><button class="btn primary" data-act="go" data-v="assistant">AI 도우미에게 말하기${ic("arrow")}</button></div></div>
+    <div style="margin:14px -12px 0">${list.length?list.map(t=>taskRow(t,true)).join(""):empty("등록한 과제나 시험이 없어요. [직접 추가]로 시작해 보세요.")}</div></section>`;
+}
+const botText=t=>{const e=esc(t),k=e.search(/\s예: /);return k<0?e:`${e.slice(0,k)}<span class="eg">${e.slice(k+1)}</span>`};
+function vAssistant(){
+  const msgs=S.chat.map((m,i)=>{
+    if(m.role==="me"){const lines=m.text.split("\n"),long=lines.length>3&&!m.open;
+      return `<div class="msg me"><div class="av">나</div><div class="bub">${esc(long?lines.slice(0,3).join("\n"):m.text)}${lines.length>3?`<button class="more" data-act="msg-more" data-i="${i}">${long?`… 외 ${lines.length-3}줄 · 전체 보기`:"접기"}</button>`:""}</div></div>`}
+    if(m.role==="confirm"){const n=m.items.filter(x=>x.on).length,src=m.source?`<span class="muted small" style="font-weight:500">${esc(m.source)}</span>`:"";
+      if(m.state==="applied"){const u=UNDO&&UNDO.where===i;return `<div class="msg"><div class="av">${ic("sparkles")}</div><div class="bub">${esc(m.text||`${m.count}건을 일정에 반영했어요.`)}${m.sync?`<span class="eg">공부 계획이 어긋났어요: ${esc(m.sync)}</span>`:""}${m.sync||u?`<div class="row" style="margin-top:12px;gap:8px">${m.sync?`<button class="btn m primary" data-act="resync" data-i="${i}">공부 계획 다시 맞추기</button>`:""}${u?`<button class="btn m secondary" data-act="undo">${ic("undo")}되돌리기</button>`:""}</div>`:""}</div></div>`}
+      if(m.state==="undone")return `<div class="msg"><div class="av">${ic("sparkles")}</div><div class="bub muted">되돌렸어요.</div></div>`;
+      if(m.state==="cancelled")return `<div class="msg"><div class="av">${ic("sparkles")}</div><div class="bub muted">반영을 취소했어요.</div></div>`;
+      return `<div class="msg"><div class="av">${ic("sparkles")}</div><div class="confirm"><div class="ch"><span>${m.items.every(x=>x.type==="계획")?"공부 계획을 다시 맞출까요?":`반영할 일정 ${m.items.length}건을 찾았어요`}</span>${src}</div>
+        ${m.items.map((x,j)=>`<div class="ci"><input type="checkbox" class="cb" id="ci-${i}-${j}" data-act="ci" data-i="${i}" data-j="${j}" ${x.on?"checked":""} aria-label="${esc(x.title)} 선택"><span class="badge gray">${x.type}</span><div class="grow"><b>${esc(x.title)}</b><div class="muted small">${esc(x.desc)}</div></div>${x.fixed?"":`<button class="btn m tertiary" data-act="ci-edit" data-i="${i}" data-j="${j}">수정</button>`}</div>`).join("")}
+        <div class="cf"><button class="btn secondary" data-act="confirm-cancel" data-i="${i}">취소</button><button class="btn primary" data-act="confirm-apply" data-i="${i}" ${n?"":"disabled"}>선택한 ${n}건 반영</button></div></div></div>`}
+    return `<div class="msg"><div class="av">${ic("sparkles")}</div><div class="bub ${m.pending?"muted":""}">${botText(m.text)}</div></div>`}).join("");
+  return `<section class="card chat"><div class="chat-h row between"><div><h2 class="row" style="gap:8px">${ic("sparkles").replace("<svg",'<svg width="22" height="22"')}AI 도우미</h2>${AI?"":`<div class="muted small">지금은 정해진 형식만 알아들어요.</div>`}</div>
+     <button class="btn m tertiary" data-act="chat-clear">대화 지우기</button></div>
+    <div class="msgs" id="msgs" tabindex="0" aria-label="대화">${msgs}</div>
+    <div class="comp"><div class="row" style="margin-bottom:12px">
+      <button class="chip" data-act="quick" data-q="notice">휴강 공지 예시</button><button class="chip" data-act="quick" data-q="syllabus">강의계획서 예시</button><button class="chip" data-act="quick" data-q="today">오늘 일정 물어보기</button></div>
+     <div class="row" style="flex-wrap:nowrap;align-items:flex-end"><button class="btn secondary icon l" data-act="attach" aria-label="파일 첨부">${ic("clip")}</button>
+      <textarea id="draft" rows="1" data-act="draft" placeholder="메시지를 입력하세요. 예: 자료구조 다음 수업 휴강이래" aria-label="메시지" style="min-height:48px;max-height:140px">${esc(S.draft)}</textarea>
+      <button class="btn primary" id="send" data-act="send" ${(S.draft.trim()||pendingImg)&&!aiBusy?"":"disabled"}>보내기</button></div>
+     ${pendingImg?`<div class="row small" style="margin-top:10px"><span class="badge gray">이미지</span><span>${esc(pendingImg.name)}</span><button class="btn m tertiary" data-act="img-remove">빼기</button></div>`:""}
+     <p class="muted small" style="margin:10px 0 0">Enter로 전송 · Shift+Enter로 줄바꿈</p></div></section>`;
+}
+function plannerRows(){return S.courses.map(c=>({c,tasks:pending().filter(t=>t.course===c.name)}))}
+function vPlanner(){
+  const rows=plannerRows(),need=rows.filter(r=>r.tasks.length),left=need.filter(r=>!S.importance[r.c.name]).length;
+  return `<section class="card"><h2>중요한 과목부터, 전체 계획서 만들기</h2>
+    <div style="height:6px"></div>
+    ${rows.map(({c,tasks})=>`<div class="prow"><div><h3>${esc(c.name)}</h3>${tasks.length?tasks.map(t=>`<div class="muted small">${esc(t.title)} · ${t.due} · 예상 ${t.hours}시간</div>`).join(""):`<div class="muted small">등록된 미완료 일정 없음</div>`}</div>
+      <div><span class="label">학점</span><b>${c.credits}학점</b></div>
+      <div><span class="label" id="imp-${c.id}">내 중요도 (1 낮음 · 5 높음)</span><div class="row" role="group" aria-labelledby="imp-${c.id}" style="gap:8px">${[1,2,3,4,5].map(n=>`<button class="chip" aria-pressed="${S.importance[c.name]===n}" data-act="imp" data-c="${esc(c.name)}" data-n="${n}" ${tasks.length?"":"disabled"}>${n}</button>`).join("")}</div></div></div>`).join("")}
+    <div style="margin-top:24px"><label class="label" for="avoid">피하고 싶은 시간 <span class="muted" style="font-weight:400">${AI?"":"· AI가 연결되면 쓸 수 있어요"}</span></label><input type="text" id="avoid" data-act="avoid" value="${esc(S.avoid||"")}" placeholder="예: 수요일 저녁은 비워 줘, 매일 점심시간은 빼 줘" ${AI?"":"disabled"}></div>
+    <div class="row between" style="margin-top:20px;align-items:flex-end"><div style="width:min(320px,100%)"><span class="label">계획 시작일</span>${dateField("planStart",S.planStart,"계획 시작일")}</div>
+      <div class="row">${need.length&&left?`<span class="muted small">중요도를 고르지 않은 과목 ${left}개</span>`:""}${!need.length?`<span class="muted small">남은 과제나 시험이 없어요.</span>`:""}
+      <button class="btn primary" data-act="plan-make" ${need.length&&!left&&!planBusy?"":"disabled"}>${planBusy?"만드는 중…":"계획서 만들기"}</button></div></div>
+    </section>`;
+}
+function vFocus(){
+  const f=S.focus,t=TODAY(),ts=ymd(t),ws=ymd(monday(t)),we=ymd(addDays(monday(t),6));
+  const state=f.running?"live":(f.acc>0?"paused":"idle");
+  const todayMs=recMs(ts,ts),weekMs=recMs(ws,we),pT=plannedMs(ts,ts),pW=plannedMs(ws,we);
+  const pct=(a,b)=>b?Math.min(100,Math.round(a/b*100)):0;
+  const colorOf=n=>{const c=courseOf(n);return c?`var(--e${c.color})`:"var(--muted)"};
+  const recs=[...S.records].sort((a,b)=>b.end-a.end).slice(0,6);
+  const dlabel=ms=>{const d=ymd(new Date(ms));const p=d===ts?"오늘":d===ymd(addDays(t,-1))?"어제":d.slice(5).replace("-","/");const x=new Date(ms);return `${p} ${pad(x.getHours())}:${pad(x.getMinutes())}`};
+  return `<div class="focus"><div class="stack" style="gap:24px"><section class="card">
+    <div class="row between"><h2>집중 타이머</h2><span class="pill ${state==="live"?"live":state==="paused"?"paused":""}" role="status"><i></i>${state==="live"?`측정 중 · ${esc(f.subject)}`:state==="paused"?`일시정지 · ${esc(f.subject)}`:"측정 대기 중"}</span></div>
+    <span class="label" id="subj-l" style="margin-top:18px">공부 과목</span>
+    <div class="row" role="group" aria-labelledby="subj-l" style="gap:8px"><button class="btn m secondary icon" data-act="subject-add" aria-label="공부 과목 추가" ${state!=="idle"?"disabled":""}>${ic("plus")}</button>
+      ${allSubjects().map(n=>`<button class="chip" aria-pressed="${f.subject===n}" data-act="subject" data-n="${esc(n)}" ${state!=="idle"&&f.subject!==n?"disabled":""}>${esc(n)}</button>`).join("")}</div>
+    <div class="timer" id="timer" aria-live="off">${dur(elapsed())}</div>
+    <div class="row">${state==="idle"?`<button class="btn primary" data-act="f-start" ${f.subject?"":"disabled"}>시작</button>`
+      :state==="live"?`<button class="btn secondary" data-act="f-pause">일시정지</button><button class="btn primary" data-act="f-stop">종료 · 저장</button>`
+      :`<button class="btn secondary" data-act="f-resume">다시 시작</button><button class="btn primary" data-act="f-stop">종료 · 저장</button><button class="btn tertiary" data-act="f-discard">기록하지 않고 끝내기</button>`}</div>
+    </section>
+   ${(()=>{const L=lag();return L.length?`<section class="card"><div class="row between"><h2>밀린 공부</h2><button class="btn secondary" data-act="makeup">빈 시간에 다시 넣기</button></div>
+    <div style="height:10px"></div>
+    ${L.map(x=>`<div class="row between" style="padding:8px 0;border-bottom:1px solid var(--line)"><b style="font-weight:500">${esc(x.subject)}</b><span class="tn">계획 ${x.planned}시간 중 ${x.done>0?durK(x.done*36e5):"0분"} · <b>${x.short}시간 모자람</b></span></div>`).join("")}</section>`:""})()}
+   <section class="card"><h2>최근 공부 기록</h2><div style="margin-top:8px">${recs.length?recs.map(r=>`<div class="rec"><span class="muted">${dlabel(r.start)}–${pad(new Date(r.end).getHours())}:${pad(new Date(r.end).getMinutes())}</span><b style="font-weight:500">${esc(r.subject)}</b><span class="tn">${durK(r.end-r.start)}</span></div>`).join(""):empty("첫 집중 세션을 시작해 보세요.")}</div></section></div>
+   <section class="card stack" style="gap:24px"><h2>나의 순공 기록</h2>
+    <div><div class="label muted">오늘 순공</div><div class="num">${dur(todayMs)}</div>${pT?`<div class="muted small">오늘 계획 ${durK(pT)} 중 ${pct(todayMs,pT)}%</div><div class="bar"><i style="width:${pct(todayMs,pT)}%"></i></div>`:""}</div>
+    <div><div class="label muted">이번 주 순공</div><div class="num">${dur(weekMs)}</div>${pW?`<div class="muted small">이번 주 계획 ${durK(pW)} 중 ${pct(weekMs,pW)}%</div><div class="bar"><i style="width:${pct(weekMs,pW)}%"></i></div>`:""}</div>
+    ${allSubjects().length?`<div style="border-top:1px solid var(--line);padding-top:20px"><div class="label muted">오늘 과목별 누적</div>
+     ${allSubjects().map(n=>{const ms=recMs(ts,ts,n);return `<div class="row between" style="padding:6px 0"><span><i class="dot" style="background:${colorOf(n)}"></i><b style="font-weight:500">${esc(n)}</b></span><span class="tn ${ms?"":"muted"}">${dur(ms)}</span></div>`}).join("")}</div>`:""}</section></div>`;
+}
+function vPrefs(){
+  const s=S.settings,opt=(arr,v,f)=>arr.map(x=>`<option value="${x}" ${String(x)===String(v)?"selected":""}>${f(x)}</option>`).join("");
+  const hours=Array.from({length:17},(_,i)=>i+6);
+  return `<div class="set"><section class="card wide"><div class="row between"><h2>일정 알림</h2><label class="row small" for="alarm" style="gap:10px"><span id="alarm-l">${s.alarm?"알림 켜짐":"알림 꺼짐"}</span><input type="checkbox" class="switch" id="alarm" role="switch" data-act="alarm" ${s.alarm?"checked":""}></label></div>
+    <div style="height:14px"></div>
+    <div class="inline">마감 <select id="adays" aria-label="며칠 전">${opt([1,2,3,5,7],s.days,x=>x+"일")}</select> 전부터 매일 <select id="atime" aria-label="알림 시각">${opt(["07:00","08:00","09:00","12:00","18:00","21:00"],s.time,x=>{const h=+x.slice(0,2);return (h<12?"오전 ":"오후 ")+(h%12||12)+"시"})}</select> 알림을 받아요.</div>
+    <div style="height:12px"></div>
+    <div class="row"><button class="btn primary" data-act="alarm-save">설정 저장</button></div></section>
+   <section class="card"><h2>나에게 맞는 공부 시간</h2><div style="height:14px"></div>
+    <label class="label" for="from">평일 시작 시각</label><select id="from">${opt(hours.slice(0,-1),s.from,x=>pad(x)+":00")}</select>
+    <label class="label" for="to" style="margin-top:14px">평일 종료 시각</label><select id="to">${opt(hours.slice(1),s.to,x=>pad(x)+":00")}</select>
+    <p class="err" id="hours-err" hidden style="margin-top:10px">종료 시각은 시작 시각보다 늦어야 해요.</p>
+    <button class="btn primary" style="margin-top:18px" data-act="hours-save">설정 저장</button></section>
+   <section class="card"><h2>데이터 관리</h2><div style="height:16px"></div>
+    <div style="display:grid;gap:10px;width:max-content;max-width:100%"><button class="btn secondary" data-act="export">${ic("download")}데이터 JSON 내보내기</button>${isBlank()?`<button class="btn secondary" data-act="fill-sample">예시 데이터로 채우기</button>`:`<button class="btn secondary" data-act="reset">데이터 모두 비우기</button>`}</div>
+    </section></div>`;
+}
+
+/* ---------- 대화 상자 ---------- */
+function open(d){dialog=d;renderDialog();const f=$("#layer [autofocus]")||$("#layer input,#layer textarea,#layer button");if(f)f.focus()}
+function close(){closeDp();dialog=null;renderDialog()}
+function renderDialog(){
+  const L=$("#layer");if(!dialog){L.innerHTML="";return}
+  const d=dialog;let h="";
+  const f=(id,label,html)=>`<div><label class="label" for="${id}">${label}</label>${html}</div>`;
+  if(d.type==="course"){const c=d.course||{name:"",days:[],start:9,end:11,room:"",credits:3};
+    h=`<h2>${d.course?"강의 수정":"강의 추가"}</h2>${f("c-name","강의 이름",`<input type="text" id="c-name" value="${esc(c.name)}" autofocus>`)}
+     <div><span class="label" id="c-days-l">요일</span><div class="days" role="group" aria-labelledby="c-days-l">${[1,2,3,4,5].map(n=>`<button type="button" class="chip" aria-pressed="${c.days.includes(n)}" data-act="c-day" data-n="${n}">${DOW[n]}</button>`).join("")}</div></div>
+     <div class="row" style="flex-wrap:nowrap">${f("c-start","시작",`<select id="c-start">${Array.from({length:10},(_,i)=>i+9).map(x=>`<option value="${x}" ${x===c.start?"selected":""}>${pad(x)}:00</option>`).join("")}</select>`)}${f("c-end","종료",`<select id="c-end">${Array.from({length:10},(_,i)=>i+10).map(x=>`<option value="${x}" ${x===c.end?"selected":""}>${pad(x)}:00</option>`).join("")}</select>`)}${f("c-credits","학점",`<select id="c-credits">${[1,2,3,4].map(x=>`<option ${x===c.credits?"selected":""}>${x}</option>`).join("")}</select>`)}</div>
+     ${f("c-room","강의실",`<input type="text" id="c-room" value="${esc(c.room)}" placeholder="예: 공학관 201호">`)}
+     <p class="err" id="d-err" hidden></p>
+     <div class="acts">${d.course?`<button class="btn danger" data-act="course-del" style="margin-right:auto">강의 삭제</button>`:""}<button class="btn secondary" data-act="close">취소</button><button class="btn primary" data-act="course-save">${d.course?"저장":"추가"}</button></div>`;
+  }else if(d.type==="course-view"){const c=d.course,off=S.cancels.some(x=>x.course===c.name&&x.date===d.date);
+    h=`<h2>${esc(c.name)}</h2><div><div>${c.days.map(n=>DOW[n]).join("·")}요일 ${hm(c.start)}~${hm(c.end)}</div><div class="muted">${esc(c.room||"강의실 미정")} · ${c.credits}학점</div>${off?`<div style="margin-top:8px"><span class="badge soon">${d.date} 휴강</span></div>`:""}</div>
+     <div class="acts">${off?`<button class="btn tertiary" data-act="cancel-undo" style="margin-right:auto">휴강 취소</button>`:`<button class="btn tertiary" data-act="cancel-set" style="margin-right:auto">이날 휴강으로 표시</button>`}<button class="btn secondary" data-act="close">닫기</button><button class="btn primary" data-act="course-edit">수정</button></div>`;
+  }else if(d.type==="task"){const t=d.task||{title:"",course:S.courses[0]?.name||"",kind:"과제",due:ymd(addDays(TODAY(),3)),hours:2};
+    h=`<h2>${d.task?"일정 수정":"과제 · 시험 추가"}</h2>${f("t-title","이름",`<input type="text" id="t-title" value="${esc(t.title)}" autofocus>`)}
+     <div class="row" style="flex-wrap:nowrap">${f("t-course","과목",`<select id="t-course">${S.courses.map(c=>`<option ${c.name===t.course?"selected":""}>${esc(c.name)}</option>`).join("")}${courseOf(t.course)||!t.course?"":`<option selected>${esc(t.course)}</option>`}</select>`)}${f("t-kind","종류",`<select id="t-kind"><option ${t.kind==="과제"?"selected":""}>과제</option><option ${t.kind==="시험"?"selected":""}>시험</option></select>`)}</div>
+     <div class="row" style="flex-wrap:nowrap"><div><span class="label">마감일</span>${dateField("t-due",t.due,"마감일")}</div>${f("t-hours","예상 시간",`<select id="t-hours">${[1,2,3,4,5,6,8,10].map(x=>`<option value="${x}" ${x===t.hours?"selected":""}>${x}시간</option>`).join("")}</select>`)}</div>
+     <p class="err" id="d-err" hidden></p>
+     <div class="acts">${d.task?`<button class="btn danger" data-act="task-del" style="margin-right:auto">삭제</button>`:""}<button class="btn secondary" data-act="close">취소</button><button class="btn primary" data-act="task-save">${d.task?"저장":"추가"}</button></div>`;
+  }else if(d.type==="subject"){
+    h=`<h2>공부 과목 추가</h2>
+     <div><label class="label" for="s-name">과목 이름</label><input type="text" id="s-name" data-act="s-name" placeholder="예: 토익, 정보처리기사" autofocus></div>
+     <p class="err" id="d-err" hidden></p>
+     <div class="row small muted" style="gap:4px">수업 과목은 강의를 추가하면 자동으로 들어와요.<button class="btn m tertiary" data-act="subject-to-course">시간표에서 강의 추가</button></div>
+     <div class="acts"><button class="btn secondary" data-act="close">취소</button><button class="btn primary" id="s-add" data-act="subject-save" disabled>추가</button></div>`;
+  }else if(d.type==="ci"){const x=S.chat[d.i].items[d.j];
+    h=`<h2>${x.type} 수정</h2>${f("ci-title","이름",`<input type="text" id="ci-title" value="${esc(x.title)}" autofocus>`)}
+     ${x.data.date!==undefined?`<div><span class="label">날짜</span>${dateField("ci-date",x.data.date,"날짜")}</div>`:""}
+     ${x.type==="강의"?f("ci-room","강의실",`<input type="text" id="ci-room" value="${esc(x.data.room||"")}">`):""}
+     <p class="err" id="d-err" hidden></p><div class="acts"><button class="btn secondary" data-act="close">취소</button><button class="btn primary" data-act="ci-save">저장</button></div>`;
+  }else if(d.type==="day"){const dt=pd(d.date),dw=dt.getDay();
+    const cs=S.courses.filter(c=>c.days.includes(dw)),ts=S.tasks.filter(t=>t.due===d.date),bs=S.blocks.filter(b=>b.date===d.date);
+    h=`<h2>${dt.getMonth()+1}월 ${dt.getDate()}일 ${DOW[dw]}요일</h2><div class="stack" style="gap:8px">
+      ${cs.map(c=>`<div><b>${hm(c.start)}~${hm(c.end)}</b> ${esc(c.name)}${S.cancels.some(x=>x.course===c.name&&x.date===d.date)?' <span class="badge soon">휴강</span>':""} <span class="muted small">${esc(c.room)}</span></div>`).join("")}
+      ${bs.map(b=>`<div><b>${hm(b.start)}~${hm(b.end)}</b> 공부 · ${esc(b.title)}</div>`).join("")}
+      ${ts.map(t=>`<div><span class="badge ${taskState(t).cls||"gray"}">마감</span> ${esc(t.title)} <span class="muted small">${esc(t.course)}</span></div>`).join("")}
+      ${cs.length+bs.length+ts.length?"":`<p class="muted" style="margin:0">일정이 없어요.</p>`}</div>
+     <div class="acts"><button class="btn secondary" data-act="close">닫기</button><button class="btn primary" data-act="day-week">이 주 시간표 보기</button></div>`;
+  }else if(d.type==="block"){const b=d.block;
+    h=`<h2>공부 · ${esc(b.title)}</h2><div>${b.date} ${hm(b.start)}~${hm(b.end)}</div>
+     <div class="acts"><button class="btn danger" data-act="block-del" style="margin-right:auto">계획 삭제</button><button class="btn secondary" data-act="close">닫기</button><button class="btn primary" data-act="block-focus">순공 시간으로 가기</button></div>`;
+  }else if(d.type==="plan"){
+    {const lack=d.rows.filter(x=>x.lack>0).length,md=v=>{const p=v.split("-");return `${+p[1]}. ${+p[2]}.`};
+    h=`<h2>${d.total?"계획서를 만들었어요":"새로 넣을 시간이 없어요"}</h2>
+     <div class="muted">${d.total?`공부 시간 ${d.total}시간 · 일정 ${d.rows.filter(x=>x.placed).length}개`:"이미 모든 일정에 공부 시간이 들어가 있어요."}${lack?` · <b style="color:var(--danger)">${lack}개는 시간이 모자라요</b>`:""}</div>
+     ${d.notes.map(n=>`<div class="small muted">${esc(n)}</div>`).join("")}
+     <div class="plist">${d.rows.map(x=>`<div class="pl"><div><b>${esc(x.title)}</b><span>${esc(x.course)} · 마감 ${md(x.due)}</span></div><div class="tn"><b>${x.placed?x.placed+"시간":"이미 "+x.have+"시간"}</b>${x.lack?`<span style="color:var(--danger)">${x.lack}시간 모자람</span>`:""}</div></div>`).join("")}</div>
+     <div class="acts">${UNDO&&UNDO.where==="plan"?`<button class="btn tertiary" data-act="undo" style="margin-right:auto">${ic("undo")}되돌리기</button>`:""}<button class="btn secondary" data-act="close">닫기</button><button class="btn primary" data-act="plan-view">시간표에서 보기</button></div>`;}
+  }else if(d.type==="export"){
+    h=`<h2>데이터 JSON 내보내기</h2><textarea id="json" rows="10" readonly aria-label="JSON 데이터" style="font-family:ui-monospace,monospace;font-size:13px">${esc(d.json)}</textarea>
+     <div class="acts"><button class="btn secondary" data-act="close">닫기</button><button class="btn primary" data-act="copy">복사</button></div>`;
+  }else if(d.type==="ask"){
+    h=`<h2>${esc(d.title)}</h2><p class="muted" style="margin:0">${esc(d.text)}</p><div class="acts"><button class="btn secondary" data-act="close" autofocus>취소</button><button class="btn ${d.danger?"danger":"primary"}" data-act="ask-yes">${esc(d.yes)}</button></div>`;
+  }
+  L.innerHTML=`<div class="scrim" data-act="scrim"><div class="dlg" role="dialog" aria-modal="true">${h}</div></div>`;
+}
+function derr(m){const e=$("#d-err");if(e){e.textContent=m;e.hidden=false}}
+
+/* ---------- AI 도우미 (규칙 기반) ---------- */
+const SAMPLE={
+ syllabus:()=>`강의명: 인공지능개론\n교수: 김교수\n이메일: ai@example.edu\n강의실: 공학관 301호\n요일: 목\n시간: 13:00~15:00\n학점: 3\n중간고사: ${ymd(addDays(TODAY(),10))}\n과제: 보고서 제출 / ${ymd(addDays(TODAY(),7))}`,
+ notice:()=>"자료구조 다음 수업 휴강이래",today:()=>"오늘 일정 알려줘"};
+function nextClass(c){for(let i=1;i<=14;i++){const d=addDays(TODAY(),i);if(c.days.includes(d.getDay()))return ymd(d)}return null}
+function understand(text){
+  const get=k=>{const m=text.match(new RegExp(k+"\\s*[:：]\\s*(.+)"));return m?m[1].trim():null};
+  if(!get("강의명")&&/다시\s*(짜|맞춰|맞추|잡아)|못\s*했|밀렸/.test(text)){
+    if(!S.blocks.length&&!pending().length)return{reply:"아직 다시 맞출 공부 계획이 없어요."};
+    return{reply:"공부 계획을 다시 맞출게요. 아래 내용을 확인해 주세요.",source:"다시 맞추기",items:[planItem([])]}}
+  const items=[];
+  const name=get("강의명");
+  if(name){
+    const days=(get("요일")||"").split("").map(ch=>DOW.indexOf(ch)).filter(n=>n>=1&&n<=5);
+    const tm=(get("시간")||"").match(/(\d{1,2}):?\d*\s*[~\-–]\s*(\d{1,2})/);
+    const room=get("강의실")||"",credits=parseInt(get("학점"))||3,prof=get("교수");
+    if(days.length&&tm)items.push({type:"강의",on:true,title:name,desc:`${days.map(n=>DOW[n]).join("·")} ${pad(+tm[1])}:00~${pad(+tm[2])}:00 · ${room||"강의실 미정"} · ${credits}학점${prof?" · "+prof:""}`,data:{name,days,start:+tm[1],end:+tm[2],room,credits}});
+    const hw=get("과제");if(hw){const m=hw.match(/(.+?)\s*\/\s*(\d{4}-\d{2}-\d{2})/);if(m)items.push({type:"과제",on:true,title:m[1].trim(),desc:`${m[2]} 마감`,data:{course:name,kind:"과제",date:m[2],hours:3}})}
+    for(const [k,label] of [["중간고사","중간고사"],["기말고사","기말고사"]]){const v=get(k);const m=v&&v.match(/\d{4}-\d{2}-\d{2}/);if(m)items.push({type:"시험",on:true,title:label,desc:m[0],data:{course:name,kind:"시험",date:m[0],hours:5}})}
+    if(items.length)return{reply:"강의계획서에서 강의 정보와 날짜가 명확한 일정을 정리했어요. 아래 내용을 검토하고 반영해 주세요.",items,source:`강의계획서 · ${name}`};
+  }
+  if(/휴강/.test(text)){const c=S.courses.find(c=>text.includes(c.name));
+    if(!c)return{reply:"어느 과목이 휴강인지 찾지 못했어요. 과목 이름을 함께 적어 주세요. 예: 자료구조 다음 수업 휴강이래"};
+    const m=text.match(/\d{4}-\d{2}-\d{2}/),date=m?m[0]:nextClass(c);
+    return{reply:`${c.name} 휴강 공지로 이해했어요. 날짜를 확인하고 반영해 주세요.`,items:[{type:"휴강",on:true,title:`${c.name} 휴강`,desc:`${date} · ${hm(c.start)}~${hm(c.end)}`,data:{course:c.name,date}}],source:"휴강 공지"}}
+  if(/오늘/.test(text)&&/(알려|뭐|일정\s*$|보여|있어)/.test(text)&&!/(넣어|추가)/.test(text)){
+    const t=TODAY(),ts=ymd(t),cs=S.courses.filter(c=>c.days.includes(t.getDay())&&!S.cancels.some(x=>x.course===c.name&&x.date===ts));
+    const bs=S.blocks.filter(b=>b.date===ts),due=S.tasks.filter(x=>x.due===ts&&!x.done),over=S.tasks.filter(x=>taskState(x).k==="over");
+    const L=[];cs.forEach(c=>L.push(`${hm(c.start)}~${hm(c.end)} ${c.name} (${c.room})`));bs.forEach(b=>L.push(`${hm(b.start)}~${hm(b.end)} 공부 · ${b.title}`));due.forEach(x=>L.push(`오늘 마감: ${x.title}`));
+    return{reply:(L.length?"오늘 일정이에요.\n"+L.join("\n"):"오늘은 수업이나 마감이 없어요.")+(over.length?`\n\n마감이 지난 과제가 ${over.length}건 있어요: ${over.map(x=>x.title).join(", ")}`:"")}}
+  const add=text.match(/(?:(오늘|내일|모레|\d{4}-\d{2}-\d{2})\s*(?:일정에|까지)?\s*)?(.+?)\s*(과제|시험)\s*(?:넣어|추가)/);
+  if(add){const when=add[1]||"오늘";const date=/\d{4}/.test(when)?when:ymd(addDays(TODAY(),{오늘:0,내일:1,모레:2}[when]));
+    const subj=add[2].replace(/일정에/g,"").trim();const c=S.courses.find(c=>subj.includes(c.name));
+    return{reply:"일정 후보를 정리했어요. 확인하고 반영해 주세요.",items:[{type:add[3],on:true,title:`${subj} ${add[3]}`,desc:`${date}${add[3]==="과제"?" 마감":""}`,data:{course:c?c.name:subj,kind:add[3],date,hours:2}}],source:"직접 요청"}}
+  return{reply:"아직 이해하지 못한 요청이에요. 이렇게 말해 보세요.\n• 강의계획서 내용을 붙여 넣기 (강의명:, 요일:, 시간: …)\n• 자료구조 다음 수업 휴강이래\n• 내일 운영체제 과제 넣어줘\n• 오늘 일정 알려줘"};
+}
+function toItems(raw){
+  const out=[],okD=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||"");
+  for(const r of Array.isArray(raw)?raw:[]){
+    if(r.type==="강의"&&r.name&&Array.isArray(r.days)){const days=[...new Set(r.days.map(Number).filter(n=>n>=1&&n<=5))];let st=Math.round(+r.start),en=Math.round(+r.end);
+      if(!days.length||!(st>=9&&st<=18))continue;if(!(en>st))en=st+1;en=Math.min(19,en);const room=String(r.room||""),credits=Math.min(4,Math.max(1,Math.round(+r.credits)||3)),name=String(r.name).slice(0,40);
+      out.push({type:"강의",on:true,title:name,desc:`${days.map(n=>DOW[n]).join("·")} ${pad(st)}:00~${pad(en)}:00 · ${room||"강의실 미정"} · ${credits}학점`,data:{name,days,start:st,end:en,room,credits}})}
+    else if((r.type==="과제"||r.type==="시험")&&r.title&&okD(r.date))out.push({type:r.type,on:true,title:String(r.title).slice(0,60),desc:r.type==="과제"?`${r.date} 마감`:r.date,data:{course:String(r.course||"기타").slice(0,40),kind:r.type,date:r.date,hours:Math.min(10,Math.max(1,Math.round(+r.hours)||2))}});
+    else if(r.type==="휴강"&&courseOf(r.course)&&okD(r.date)){const c=courseOf(r.course);out.push({type:"휴강",on:true,title:`${c.name} 휴강`,desc:`${r.date} · ${hm(c.start)}~${hm(c.end)}`,data:{course:c.name,date:r.date}})}
+    else if(r.type==="마감 변경"&&okD(r.date)){const t=S.tasks.find(k=>k.title===r.title&&!k.done)||S.tasks.find(k=>k.title===r.title);if(t&&t.due!==r.date)out.push({type:"마감 변경",on:true,fixed:true,title:t.title,desc:`${t.due} → ${r.date}`,data:{id:t.id,date:r.date}})}
+    else if(r.type==="다시 맞추기"){const avoid=(Array.isArray(r.avoid)?r.avoid:[]).map(b=>({dow:Math.round(+(b.day??b.dow)),from:Math.round(+b.from),to:Math.round(+b.to)})).filter(b=>b.dow>=1&&b.dow<=5&&b.from>=6&&b.to<=22&&b.to>b.from);if(!out.some(x=>x.type==="계획"))out.push(planItem(avoid))}
+  }const pi=out.findIndex(x=>x.type==="계획");if(pi>=0)out.push(out.splice(pi,1)[0]);return out}
+async function askAI(text,img){
+  const t=TODAY(),hist=S.chat.filter(m=>m.role!=="confirm"&&!m.pending).slice(-7,-1).map(m=>`${m.role==="me"?"사용자":"도우미"}: ${m.text.slice(0,400)}`).join("\n");
+  const prompt=`너는 대학 생활 플래너 CampusFlow의 일정 도우미다. 사용자의 메시지(공지, 강의계획서, 요청, 질문${img?", 첨부 이미지":""})를 읽고 아래 JSON 하나만 답한다.
+오늘: ${ymd(t)} (${DOW[t.getDay()]}요일)
+현재 강의: ${JSON.stringify(S.courses.map(c=>({name:c.name,days:c.days.map(n=>DOW[n]).join(""),time:`${c.start}~${c.end}시`,room:c.room})))}
+휴강: ${JSON.stringify(S.cancels)}
+과제·시험: ${JSON.stringify(S.tasks.map(x=>({title:x.title,course:x.course,kind:x.kind,due:x.due,done:x.done})))}
+공부 계획: ${JSON.stringify(S.blocks.filter(b=>b.date>=ymd(t)).slice(0,20).map(b=>({date:b.date,time:`${b.start}~${b.end}시`,title:b.title})))}
+형식: {"reply":"한국어 1~3문장, 해요체","source":"출처를 뜻하는 짧은 말(예: 강의계획서 · 과목명, 휴강 공지)","items":[...]}
+items 원소는 다음 중 하나:
+ {"type":"강의","name":"과목명","days":[1~5, 월=1],"start":시작 시(9~18 정수),"end":종료 시(정수),"room":"강의실","credits":학점 정수}
+ {"type":"과제" 또는 "시험","title":"이름","course":"과목명","date":"YYYY-MM-DD","hours":예상 공부 시간 정수}
+ {"type":"휴강","course":"현재 강의 중 하나의 정확한 이름","date":"YYYY-MM-DD"}
+ {"type":"마감 변경","title":"현재 과제·시험 중 하나의 정확한 이름","date":"새 마감 YYYY-MM-DD"}
+ {"type":"다시 맞추기","avoid":[{"day":1~5(월=1),"from":시작 시,"to":끝 시}]}  (avoid는 사용자가 피하고 싶다고 말한 평일 시간만, 없으면 [])
+규칙: 사용자가 공부를 못 했다고 하거나, 계획을 다시 짜 달라고 하거나, 어떤 요일이나 시간은 안 된다고 하면 "다시 맞추기"를 넣는다. 마감이 바뀌었다고 하면 "마감 변경"을 넣고, 그 과제에 공부 계획이 있으면 "다시 맞추기"도 함께 넣는다. 휴강으로 시간이 비면 "다시 맞추기"를 함께 제안해도 된다. 일정에 반영할 내용이 있으면 items에 담고 reply에는 검토해 달라고 말한다. 날짜나 과목이 불분명하면 items에 넣지 말고 reply에서 되묻는다. 상대 날짜(내일, 다음 주 화요일)는 오늘 기준으로 계산한다. 일정에 대한 질문이면 items는 []로 두고 위 데이터로 reply에 답한다. 일정과 무관한 요청이면 할 수 있는 일을 짧게 안내한다.
+${hist?"이전 대화:\n"+hist+"\n":""}사용자 메시지: """${text||"(첨부 이미지에서 일정을 찾아 주세요)"}"""`;
+  const opts={cache:false};
+  if(img){let ok=false;try{ok=!!(await AI.limits()).images}catch(e){}if(!ok)throw {code:"no_images"};opts.images=[img.blob]}
+  let v=await AI.json(prompt,opts);if(typeof v==="string")v=JSON.parse(v);
+  return{reply:String(v.reply||"정리했어요."),items:toItems(v.items),source:String(v.source||"AI 정리").slice(0,40)}}
+async function send(){
+  const text=S.draft.trim(),img=pendingImg;if((!text&&!img)||aiBusy)return;
+  S.chat.push({role:"me",text:text+(img?`${text?"\n":""}[이미지 첨부: ${img.name}]`:"")});S.draft="";pendingImg=null;
+  const fallback=note=>{const r=understand(text);S.chat.push({role:"bot",text:(note?note+"\n\n":"")+r.reply});if(r.items)S.chat.push({role:"confirm",items:r.items,source:r.source,state:"open"})};
+  if(!AI){if(img)S.chat.push({role:"bot",text:"AI가 연결되지 않아 이미지는 읽지 못했어요. 내용을 글로 붙여 넣어 주세요."});else fallback();save();render();const d=$("#draft");if(d)d.focus();return}
+  const wait={role:"bot",text:"읽고 있어요…",pending:true};S.chat.push(wait);aiBusy=true;render();
+  try{const r=await askAI(text,img);S.chat=S.chat.filter(m=>m!==wait);S.chat.push({role:"bot",text:r.reply});if(r.items.length)S.chat.push({role:"confirm",items:r.items,source:r.source,state:"open"})}
+  catch(e){S.chat=S.chat.filter(m=>m!==wait);const c=e&&e.code;if(c==="not_granted"){AI=null;aiNote()}
+    const why=c==="no_images"?"이미지는 지금 읽을 수 없어요. 내용을 글로 붙여 넣어 주세요.":c==="rate_limited"?"요청이 많아 잠시 AI를 쓸 수 없어요. 정해진 형식으로 대신 읽었어요.":c==="not_granted"?"AI 사용이 허용되지 않아 정해진 형식으로 읽었어요.":"AI가 답하지 못해 정해진 형식으로 읽었어요.";
+    if(c==="no_images"||(!text&&img))S.chat.push({role:"bot",text:why});else fallback(why)}
+  aiBusy=false;save();render();const d=$("#draft");if(d)d.focus();
+}
+/* ---------- 다시 맞추기와 되돌리기 ---------- */
+let UNDO=null;
+const KEEP_UNDO=new Set(["undo","go","close","plan-view","mode","week","month","today","day","day-week","show-study","course","block","msg-more","ci","ci-edit","quick","attach","img-remove","send","confirm-cancel","export","copy","subject","alarm"]);
+const SNAP=["courses","tasks","blocks","cancels","importance"];
+function snap(where){UNDO={where,data:JSON.stringify(Object.fromEntries(SNAP.map(k=>[k,S[k]])))}}
+function undoLast(){if(!UNDO)return;const d=JSON.parse(UNDO.data),w=UNDO.where;for(const k of SNAP)S[k]=d[k];UNDO=null;
+  if(typeof w==="number"&&S.chat[w])S.chat[w].state="undone";
+  if(dialog)close();save();render();toast("되돌렸어요","undo")}
+function missedBlocks(){const t=TODAY(),ts=ymd(t),ws=ymd(monday(t));
+  return S.blocks.filter(b=>b.date>=ws&&b.date<ts&&!b.settled&&b.taskId&&S.tasks.some(x=>x.id===b.taskId&&!x.done&&!(x.kind==="시험"&&x.due<ts))&&!recMs(b.date,b.date,b.subject))}
+function outOfSync(){const ts=ymd(TODAY()),fut=S.blocks.filter(b=>b.date>=ts&&!b.settled);
+  const late=fut.filter(b=>b.taskId&&S.tasks.some(x=>x.id===b.taskId&&!x.done&&x.due>=ts&&b.date>x.due));
+  const hit=fut.filter(b=>!late.includes(b)&&S.courses.some(c=>c.days.includes(pd(b.date).getDay())&&b.start<c.end&&b.end>c.start&&!S.cancels.some(x=>x.course===c.name&&x.date===b.date)));
+  const missed=missedBlocks();
+  const thin=S.blocks.length?pending().filter(x=>courseOf(x.course)&&x.due>ts&&!S.blocks.some(b=>b.taskId===x.id)):[];
+  const p=[];if(late.length)p.push(`마감 뒤에 잡힌 공부 ${late.length}개`);if(hit.length)p.push(`수업과 겹친 공부 ${hit.length}개`);if(missed.length)p.push(`하지 못한 공부 ${missed.length}개`);if(thin.length)p.push(`공부 계획이 없는 일정 ${thin.length}건`);
+  return{n:late.length+hit.length+missed.length+thin.length,text:p.join(", ")}}
+function planItem(avoid=[]){const ts=ymd(TODAY()),n=S.blocks.filter(b=>b.date>=ts&&b.taskId&&!b.settled).length,m=missedBlocks().length;
+  const p=[`오늘 이후 공부 계획 ${n}개를 빈 시간에 다시 넣어요`];if(m)p.push(`하지 못한 공부 ${m}개 포함`);if(avoid.length)p.push(avoid.map(b=>`${DOW[b.dow]} ${b.from}~${b.to}시`).join(", ")+" 비움");
+  return{type:"계획",on:true,fixed:true,title:"공부 계획 다시 맞추기",desc:p.join(" · "),data:{avoid}}}
+function resync(blocked=[]){const ts=ymd(TODAY()),miss=new Set(missedBlocks().map(b=>b.id));
+  S.blocks=S.blocks.filter(b=>!(miss.has(b.id)||(b.date>=ts&&b.taskId&&!b.settled)));
+  const ps=S.planStart;S.planStart=ts;const r=makePlan(blocked);S.planStart=ps;save();return r}
+function planText(r){const lack=r.rows.filter(x=>x.lack>0).length;
+  return r.total?`공부 계획을 다시 맞췄어요. ${r.total}시간을 일정 ${r.rows.filter(x=>x.placed).length}개에 넣었어요.${lack?` ${lack}개는 시간이 모자라요.`:""}`:"다시 넣을 공부 시간이 없어요."}
+function resyncFrom(i){if(S.chat[i])S.chat[i].sync="";snap(S.chat.length);const r=resync();S.chat.push({role:"confirm",items:[],state:"applied",text:planText(r)});save();render();if(r.total)burst();toast(r.total?"공부 계획을 다시 맞췄어요":"다시 넣을 공부 시간이 없어요")}
+function applyConfirm(i){
+  const m=S.chat[i];let n=0,plan=null;snap(i);
+  for(const x of m.items){if(!x.on)continue;n++;const d=x.data;
+    if(x.type==="강의"){if(!courseOf(x.title)){const used=S.courses.map(c=>c.color);const color=[1,2,3,4].find(k=>!used.includes(k))||(S.courses.length%4)+1;S.courses.push({id:uid(),name:x.title,days:d.days,start:d.start,end:d.end,room:d.room,credits:d.credits,color})}}
+    else if(x.type==="휴강"){if(!S.cancels.some(c=>c.course===d.course&&c.date===d.date))S.cancels.push({course:d.course,date:d.date})}
+    else if(x.type==="마감 변경"){const t=S.tasks.find(k=>k.id===d.id);if(t)t.due=d.date}
+    else if(x.type==="계획"){plan=d.avoid||[]}
+    else S.tasks.push({id:uid(),title:x.title,course:d.course,kind:d.kind,due:d.date,hours:d.hours,done:false});}
+  m.text="";m.sync="";
+  if(plan){const r=resync(plan);m.text=(n>1?`${n-1}건을 일정에 반영했어요. `:"")+planText(r)}
+  else{const o=outOfSync();if(o.n)m.sync=o.text}
+  m.state="applied";m.count=n;save();render();burst();toast(plan?"공부 계획을 다시 맞췄어요":`${n}건을 일정에 반영했어요`);
+}
+
+/* ---------- AI 플래너 ---------- */
+function makePlan(blocked=[]){
+  const s=S.settings,start=pd(S.planStart)<TODAY()?TODAY():pd(S.planStart);
+  const busy=(ds,h)=>{const dw=pd(ds).getDay();
+    return S.courses.some(c=>c.days.includes(dw)&&h>=c.start&&h<c.end&&!S.cancels.some(x=>x.course===c.name&&x.date===ds))||S.blocks.some(b=>b.date===ds&&h>=b.start&&h<b.end)||blocked.some(b=>b.dow===dw&&h>=b.from&&h<b.to)};
+  const todo=pending().map(t=>({t,c:courseOf(t.course)})).filter(x=>x.c)
+    .sort((a,b)=>((S.importance[b.c.name]||3)-(S.importance[a.c.name]||3))||(b.c.credits-a.c.credits)||(a.t.due<b.t.due?-1:1));
+  const lines=[],short=[],rows=[];let total=0;
+  for(const {t,c} of todo){const why=`중요도 ${S.importance[c.name]} · ${c.credits}학점 · 마감 ${t.due}`;
+    const have=S.blocks.filter(b=>b.taskId===t.id).reduce((a,b)=>a+b.end-b.start,0);let need=t.hours-have,placed=0;
+    if(need<=0){lines.push(`${t.title}: 이미 ${have}시간 배치됨`);rows.push({title:t.title,course:t.course,due:t.due,placed:0,have,lack:0});continue}
+    const last=pd(t.due)<start?addDays(start,6):addDays(pd(t.due),-1)<start?start:addDays(pd(t.due),-1);
+    for(let d=new Date(start);d<=last&&need>0;d=addDays(d,1)){const dw=d.getDay();if(dw===0||dw===6)continue;const ds=ymd(d);let perDay=0;
+      for(let h=s.from;h<s.to&&need>0&&perDay<2;h++){if(busy(ds,h))continue;
+        const prev=S.blocks.find(b=>b.taskId===t.id&&b.date===ds&&b.end===h);
+        if(prev)prev.end=h+1;else S.blocks.push({id:uid(),date:ds,start:h,end:h+1,title:t.title,subject:t.course,taskId:t.id});
+        need--;placed++;perDay++;total++}}
+    lines.push(`${t.title} (${t.course}): ${placed}시간 배치 — ${why}`);
+    if(need>0)short.push(`${t.title}: ${need}시간 부족 (마감 ${t.due})`);
+    rows.push({title:t.title,course:t.course,due:t.due,placed,have,lack:need});
+  }
+  save();return{lines,short,total,rows};
+}
+async function planMake(){
+  if(planBusy)return;let blocked=[],note="";const txt=(S.avoid||"").trim();
+  if(txt&&AI){planBusy=true;render();
+    try{let v=await AI.json(`대학생이 공부 계획에서 피하고 싶은 시간을 말했다. 평일(월=1~금=5)과 시간(6~22시, 정수)으로 바꿔 JSON 하나만 답한다.
+형식: {"blocked":[{"dow":1~5,"from":시작 시,"to":끝 시}],"note":"이해한 내용을 한국어 한 문장, 해요체"}
+규칙: "매일"이면 1~5 모두. 저녁=18~22, 아침=6~9, 점심=12~13, 오후=13~18, 오전=9~12. 해석할 수 없으면 blocked는 []로 두고 note에 이유를 쓴다.
+말: """${txt}"""`,{cache:false});if(typeof v==="string")v=JSON.parse(v);
+      blocked=(Array.isArray(v.blocked)?v.blocked:[]).map(b=>({dow:+b.dow,from:+b.from,to:+b.to})).filter(b=>b.dow>=1&&b.dow<=5&&b.to>b.from);note=String(v.note||"")}
+    catch(e){note="피하고 싶은 시간은 읽지 못해 반영하지 않았어요."}
+    planBusy=false}
+  else if(txt)note="AI가 연결되지 않아 피하고 싶은 시간은 반영하지 않았어요.";
+  snap("plan");const r=makePlan(blocked);const notes=[];if(!r.total)UNDO=null;
+  if(note)notes.push(note);
+  if(blocked.length)notes.push("비운 시간: "+blocked.map(b=>`${DOW[b.dow]} ${b.from}~${b.to}시`).join(", "));
+  const dlg={type:"plan",rows:r.rows,notes,total:r.total};
+  open(dlg);render();if(r.total)burst();toast(r.total?`공부 시간 ${r.total}시간을 배치했어요`:"새로 배치할 시간이 없어요");
+  if(dlg.summary){try{const a=await AI(`공부 계획 배치 결과를 대학생에게 설명한다. 한국어 해요체 2문장. 어떤 과목을 왜 먼저 넣었는지와, 시간이 모자란 일정이 있으면 어떻게 하면 좋을지 말한다. 목록 없이 문장만 쓴다. 아래 내용만 근거로 쓴다.
+배치: ${JSON.stringify(r.lines)}
+모자란 시간: ${JSON.stringify(r.short)}`,{cache:false,modelTier:"quick"});dlg.summary=String(a.text||"").trim().slice(0,400)}catch(e){dlg.summary=""}
+    if(dialog===dlg)renderDialog()}
+}
+
+/* ---------- 이벤트 ---------- */
+document.addEventListener("click",e=>{
+  if(dp&&!e.target.closest(".dp")&&!e.target.closest('[data-act="dp-open"]'))closeDp();
+  const el=e.target.closest("[data-act]");if(!el)return;
+  lastXY=[e.clientX,e.clientY];
+  if(el.dataset.act==="dp-open"){dp&&dp.id===el.dataset.id?closeDp():(closeDp(),openDp(el.dataset.id));return}
+  if(el.dataset.act==="dp-nav"){const f=pd(dp.month);dp.month=ymd(new Date(f.getFullYear(),f.getMonth()+ +el.dataset.n,1));renderDp();return}
+  if(el.dataset.act==="dp-today"){const t=TODAY();dp.month=ymd(new Date(t.getFullYear(),t.getMonth(),1));renderDp();return}
+  if(el.dataset.act==="dp-pick"){pickDate(el.dataset.date);return}
+  const a=el.dataset.act,d=el.dataset;
+  if(a==="scrim"){if(e.target===el)close();return}
+  if(UNDO&&!KEEP_UNDO.has(a))UNDO=null;
+  if(el.tagName==="INPUT"&&el.type!=="checkbox"||el.tagName==="SELECT"||el.tagName==="TEXTAREA")return;
+  const u=S.ui;
+  switch(a){
+   case "go":go(d.v);break;
+   case "home":close();S=blank();save();go("timetable");render();window.scrollTo(0,0);toast("처음 상태로 돌아왔어요","undo","처음 열었을 때의 빈 화면이에요");break;
+   case "fill-sample":{const v=S.ui.view;S=seed();S.ui.view=v;save();render();toast("예시 데이터로 채웠어요");break}
+   case "close":close();break;
+   /* 시간표 */
+   case "mode":u.mode=d.m;save();render();break;
+   case "week":setDate(addDays(pd(u.date),7*d.n));render();break;
+   case "month":{const c=pd(u.date),y=c.getFullYear(),mo=c.getMonth()+ +d.n,last=new Date(y,mo+1,0).getDate();setDate(new Date(y,mo,Math.min(c.getDate(),last)));render();break}
+   case "today":setDate(TODAY());render();break;
+   case "show-study":u.showStudy=el.checked;save();render();break;
+   case "course-add":open({type:"course",days:[]});break;
+   case "course":open({type:"course-view",course:S.courses.find(c=>c.id===d.id),date:d.date});break;
+   case "course-edit":open({type:"course",course:dialog.course});break;
+   case "c-day":el.setAttribute("aria-pressed",el.getAttribute("aria-pressed")!=="true");break;
+   case "course-save":{const name=$("#c-name").value.trim(),days=[...document.querySelectorAll('[data-act="c-day"][aria-pressed="true"]')].map(b=>+b.dataset.n),st=+$("#c-start").value,en=+$("#c-end").value;
+     if(!name)return derr("강의 이름을 입력하세요.");if(!days.length)return derr("요일을 하나 이상 고르세요.");if(en<=st)return derr("종료 시각은 시작 시각보다 늦어야 해요.");
+     const old=dialog.course;if(S.courses.some(c=>c.name===name&&c!==old))return derr("같은 이름의 강의가 이미 있어요.");
+     const v={name,days,start:st,end:en,room:$("#c-room").value.trim(),credits:+$("#c-credits").value};
+     if(old){if(old.name!==name){S.tasks.forEach(t=>{if(t.course===old.name)t.course=name});S.blocks.forEach(b=>{if(b.subject===old.name)b.subject=name});S.records.forEach(r=>{if(r.subject===old.name)r.subject=name});S.cancels.forEach(x=>{if(x.course===old.name)x.course=name});if(S.importance[old.name]){S.importance[name]=S.importance[old.name];delete S.importance[old.name]}}Object.assign(old,v)}
+     else{const used=S.courses.map(c=>c.color);S.courses.push({id:uid(),...v,color:[1,2,3,4].find(k=>!used.includes(k))||(S.courses.length%4)+1})}
+     save();close();render();if(!old)burst();toast(old?"강의를 수정했어요":`${name} 강의를 추가했어요`);break}
+   case "course-del":{const c=dialog.course;open({type:"ask",title:`${c.name} 강의를 삭제할까요?`,text:"시간표에서 강의가 사라져요. 과제와 공부 기록은 남아요.",yes:"강의 삭제",danger:true,onYes(){S.courses=S.courses.filter(x=>x!==c);delete S.importance[c.name];if(S.focus.subject===c.name&&!S.focus.running&&!S.focus.acc)S.focus.subject=null;save();toast("강의를 삭제했어요")}});break}
+   case "cancel-set":S.cancels.push({course:dialog.course.name,date:dialog.date});save();close();render();toast("휴강으로 표시했어요");break;
+   case "cancel-undo":S.cancels=S.cancels.filter(x=>!(x.course===dialog.course.name&&x.date===dialog.date));save();close();render();toast("휴강을 취소했어요");break;
+   case "day":setDate(pd(d.date));render();open({type:"day",date:d.date});break;
+   case "day-week":u.mode="week";setDate(pd(dialog.date));close();render();break;
+   case "block":open({type:"block",block:S.blocks.find(b=>b.id===d.id)});break;
+   case "block-del":S.blocks=S.blocks.filter(b=>b!==dialog.block);save();close();render();toast("공부 계획을 삭제했어요");break;
+   case "block-focus":{const b=dialog.block,f=S.focus;if(!f.running&&!f.acc&&allSubjects().includes(b.subject))f.subject=b.subject;close();go("focus");break}
+   /* 과제 */
+   case "toggle":{const t=S.tasks.find(x=>x.id===d.id);t.done=el.checked;save();render();if(t.done)burst();t.done?toast(`${t.title} 완료`):toast("완료를 취소했어요","undo");break}
+   case "task-add":open({type:"task"});break;
+   case "task-edit":open({type:"task",task:S.tasks.find(x=>x.id===d.id)});break;
+   case "task-save":{const title=$("#t-title").value.trim(),due=$("#t-due").value;if(!title)return derr("이름을 입력하세요.");if(!due)return derr("마감일을 고르세요.");
+     const v={title,course:$("#t-course").value,kind:$("#t-kind").value,due,hours:+$("#t-hours").value};const old=dialog.task;
+     if(old){Object.assign(old,v);S.blocks.forEach(b=>{if(b.taskId===old.id)b.title=title})}else S.tasks.push({id:uid(),...v,done:false});
+     save();close();render();if(!old)burst();toast(old?"일정을 수정했어요":`${title}을(를) 추가했어요`);break}
+   case "task-del":{const t=dialog.task;open({type:"ask",title:`${t.title}을(를) 삭제할까요?`,text:"이 일정으로 만든 공부 계획도 함께 삭제돼요.",yes:"삭제",danger:true,onYes(){S.tasks=S.tasks.filter(x=>x!==t);S.blocks=S.blocks.filter(b=>b.taskId!==t.id);save();toast("일정을 삭제했어요")}});break}
+   /* AI 도우미 */
+   case "quick":S.draft=SAMPLE[d.q]();save();render();$("#draft").focus();break;
+   case "attach":$("#file").click();break;
+   case "send":send();break;
+   case "msg-more":S.chat[d.i].open=!S.chat[d.i].open;save();{const m=$("#msgs"),top=m.scrollTop;render();$("#msgs").scrollTop=top}break;
+   case "ci":S.chat[d.i].items[d.j].on=el.checked;save();{const top=$("#msgs").scrollTop;render();$("#msgs").scrollTop=top}break;
+   case "ci-edit":open({type:"ci",i:+d.i,j:+d.j});break;
+   case "ci-save":{const x=S.chat[dialog.i].items[dialog.j],title=$("#ci-title").value.trim();if(!title)return derr("이름을 입력하세요.");
+     const oldT=x.title;x.title=title;if(x.type==="강의"){S.chat[dialog.i].items.forEach(y=>{if(y.data.course===oldT)y.data.course=title});x.data.name=title;x.data.room=$("#ci-room").value.trim();x.desc=`${x.data.days.map(n=>DOW[n]).join("·")} ${pad(x.data.start)}:00~${pad(x.data.end)}:00 · ${x.data.room||"강의실 미정"} · ${x.data.credits}학점`}
+     else{const dt=$("#ci-date").value;if(!dt)return derr("날짜를 고르세요.");x.data.date=dt;x.desc=x.type==="과제"?`${dt} 마감`:x.type==="휴강"?`${dt}`:dt}
+     save();close();render();break}
+   case "confirm-apply":applyConfirm(+d.i);break;
+   case "resync":resyncFrom(+d.i);break;
+   case "resync-ask":{const o=outOfSync();S.chat.push({role:"bot",text:`공부 계획이 어긋났어요: ${o.text}. 아래 내용을 확인해 주세요.`});S.chat.push({role:"confirm",items:[planItem([])],source:"다시 맞추기",state:"open"});save();go("assistant");break}
+   case "undo":undoLast();break;
+   case "confirm-cancel":S.chat[d.i].state="cancelled";save();render();break;
+   case "chat-clear":open({type:"ask",title:"대화를 지울까요?",text:"대화 내용만 지워요. 이미 반영한 일정은 그대로 남아요.",yes:"대화 지우기",danger:true,onYes(){S.chat=seed().chat;S.draft="";save();toast("대화를 지웠어요")}});break;
+   /* 플래너 */
+   case "imp":{const n=+d.n;if(S.importance[d.c]===n)delete S.importance[d.c];else S.importance[d.c]=n;save();render();break}
+   case "plan-make":planMake();break;
+   case "img-remove":pendingImg=null;render();break;
+   case "brief":aiBrief();break;
+   case "makeup":{snap("makeup");const r=makeup();render();if(r.placed)burst();toast(r.placed?`밀린 공부 ${r.placed}시간을 다시 넣었어요${r.miss?` · ${r.miss}시간은 빈 시간이 없어요`:""}`:"다시 넣을 빈 시간이 없어요");break}
+   case "plan-view":{u.mode="week";u.showStudy=true;setDate(pd(S.planStart)<TODAY()?TODAY():pd(S.planStart));close();go("timetable");break}
+   /* 순공 */
+   case "subject":{const f=S.focus;if(f.running||f.acc)break;f.subject=f.subject===d.n?null:d.n;save();render();break}
+   case "subject-add":open({type:"subject"});break;
+   case "subject-save":{const n=$("#s-name").value.trim();if(!n)break;if(allSubjects().includes(n))return derr("같은 이름의 과목이 이미 있어요.");S.subjects.push(n);S.focus.subject=n;save();close();render();toast(`${n} 과목을 추가했어요`);break}
+   case "subject-to-course":close();go("timetable");open({type:"course"});break;
+   case "f-start":{const f=S.focus;if(!f.subject)break;f.running=true;f.startedAt=Date.now();f.sessionStart=Date.now();f.acc=0;save();render();break}
+   case "f-pause":{const f=S.focus;f.acc=elapsed();f.running=false;save();render();break}
+   case "f-resume":{const f=S.focus;f.running=true;f.startedAt=Date.now();save();render();break}
+   case "f-stop":{const f=S.focus,ms=elapsed(),now=Date.now();if(ms<1000){toast("1초 이상 측정한 뒤에 저장할 수 있어요");break}
+     S.records.push({subject:f.subject,start:now-ms,end:now});const name=f.subject;S.focus={subject:null,running:false,startedAt:0,acc:0,sessionStart:0};save();render();burst();toast(`${name} ${durK(ms)}을 기록했어요`);break}
+   case "f-discard":open({type:"ask",title:"기록하지 않고 끝낼까요?",text:`지금까지 잰 ${dur(elapsed())}이 사라져요.`,yes:"기록하지 않고 끝내기",danger:true,onYes(){S.focus={subject:null,running:false,startedAt:0,acc:0,sessionStart:0};save()}});break;
+   /* 설정 */
+   case "alarm":S.settings.alarm=el.checked;save();render();el.checked?toast("일정 알림 켜짐","on",`마감 ${S.settings.days}일 전부터 알려 드려요`):toast("일정 알림 꺼짐","off","이제 마감을 알리지 않아요");break;
+   case "alarm-save":S.settings.days=+$("#adays").value;S.settings.time=$("#atime").value;save();render();toast("알림 설정을 저장했어요");break;
+   case "alarm-test":{const n=pending().sort((a,b)=>a.due<b.due?-1:1)[0];const text=n?`테스트 알림: ${n.title} · ${n.due} 마감`:"테스트 알림: 남은 마감이 없어요";const x=new Date();S.inbox.unshift({text,at:`${pad(x.getHours())}:${pad(x.getMinutes())}`});S.inbox=S.inbox.slice(0,5);save();render();toast(text);break}
+   case "inbox-clear":S.inbox=[];save();render();break;
+   case "hours-save":{const a=+$("#from").value,b=+$("#to").value;if(b<=a){$("#hours-err").hidden=false;break}S.settings.from=a;S.settings.to=b;save();render();toast("공부 시간을 저장했어요");break}
+   case "export":open({type:"export",json:JSON.stringify({courses:S.courses,tasks:S.tasks,blocks:S.blocks,cancels:S.cancels,records:S.records,settings:S.settings},null,2)});break;
+   case "copy":{const t=$("#json");t.select();(navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.reject()).then(()=>toast("복사했어요"),()=>toast("복사하지 못했어요. 선택된 내용을 직접 복사하세요."));break}
+   case "reset":open({type:"ask",title:"데이터를 모두 비울까요?",text:"강의, 과제, 공부 계획, 순공 기록, 대화가 모두 지워지고 처음 화면으로 돌아가요. 되돌릴 수 없어요.",yes:"데이터 모두 비우기",danger:true,onYes(){const v=S.ui.view;S=blank();S.ui.view=v;save();toast("데이터를 모두 비웠어요","undo")}});break;
+   case "ask-yes":{const f=dialog.onYes;close();f&&f();render();break}
+  }
+});
+document.addEventListener("input",e=>{
+  const a=e.target.dataset.act;
+  if(a==="avoid"){S.avoid=e.target.value;save()}
+  if(a==="draft"){S.draft=e.target.value;save();$("#send").disabled=!(S.draft.trim()||pendingImg)||aiBusy;e.target.style.height="auto";e.target.style.height=Math.min(140,e.target.scrollHeight)+"px"}
+  if(a==="s-name")$("#s-add").disabled=!e.target.value.trim();
+});
+document.addEventListener("change",e=>{
+  const a=e.target.dataset.act,v=e.target.value;
+  if(a==="jump"&&v){setDate(pd(v));render()}
+  if(a==="plan-start"&&v){S.planStart=v;save()}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&dp){closeDp();return}
+  if(e.key==="Escape"&&dialog){close();return}
+  if(e.target.id==="draft"&&e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}
+  if(e.key==="Enter"&&dialog&&e.target.tagName==="INPUT"&&e.target.type==="text"){const b=$("#layer .btn.primary");if(b&&!b.disabled)b.click()}
+});
+$("#file").addEventListener("change",e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){readPdf(f);return}
+  if(f.type.startsWith("image/")){if(!AI){toast("이미지는 AI가 연결됐을 때만 읽을 수 있어요");return}if(f.size>5e6){toast("5MB 이하 이미지만 첨부할 수 있어요");return}pendingImg={blob:f,name:f.name};render();toast("이미지를 첨부했어요. [보내기]를 누르세요");return}
+  if(!/\.(txt|md)$/i.test(f.name)&&!f.type.startsWith("text/")){toast("텍스트 파일, PDF, 이미지만 첨부할 수 있어요");return}
+  const r=new FileReader();r.onload=()=>{S.draft=String(r.result).slice(0,4000);save();render();toast(`${f.name} 내용을 입력칸에 넣었어요`)};r.readAsText(f);
+});
+window.addEventListener("hashchange",()=>{const v=location.hash.slice(1);if(VIEWS.some(x=>x[0]===v)&&v!==S.ui.view){S.ui.view=v;save();render()}});
+{const v=location.hash.slice(1);if(VIEWS.some(x=>x[0]===v))S.ui.view=v}
+render();connectAI();window.addEventListener("load",()=>{if(!AI)connectAI()});
+</script>
+</body>
+</html>
