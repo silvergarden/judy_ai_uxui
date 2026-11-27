@@ -32,3 +32,10 @@
 
 
 #Claude #Fable #Threejs #바이브코딩 #디자인 #인테리어
+
+
+![우리 집 3D 룸 투어 시연 영상](%5BFable%5D%20room-tour-v1.0.gif)
+
+[전체 영상(MP4, 40초)](%5BFable%5D%20room-tour-v1.0.mp4)
+
+https://claude.ai/artifact/2vuewVuzaiKYY6agBGyTcL
