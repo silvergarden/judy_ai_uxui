@@ -1,6 +1,6 @@
-![태양계 3D 모형 시연 영상](%5BFable%5D%203D%20solar%20system_20261113/%5BFable%5D%203D%20solar%20system_20261113.gif)
+![태양계 3D 모형 시연 영상](3D-Solar-System-v1.0.gif)
 
-[전체 영상(MP4, 1분 8초)](%5BFable%5D%203D%20solar%20system_20261113/%5BFable%5D%203D%20solar%20system_20261113.mp4)
+[전체 영상(MP4, 1분 8초)](3D-Solar-System-v1.0.mp4)
 
 [Fable 5.2] 태양계 3D 모형
 
