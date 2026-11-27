@@ -30,6 +30,8 @@
 #Claude #Fable #Threejs #바이브코딩 #디자인 #과학교육
 
 
-(영상)
+![태양계 3D 모형 시연 영상](demo.gif)
+
+[고화질 영상(MP4, 18초)](demo.mp4)
 
 https://claude.ai/artifact/STZWnwywuAohy7BuW7hbT6
