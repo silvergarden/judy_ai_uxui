@@ -32,6 +32,6 @@
 
 ![태양계 3D 모형 시연 영상](%5BFable%5D%203D%20solor%20system_20261113.gif)
 
-[고화질 영상(MP4, 18초)](%5BFable%5D%203D%20solor%20system_20261113.mp4)
+[전체 영상(MP4, 1분 8초)](%5BFable%5D%203D%20solor%20system_20261113.mp4)
 
 https://claude.ai/artifact/STZWnwywuAohy7BuW7hbT6
