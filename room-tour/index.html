@@ -61,12 +61,13 @@
   #lPage { position:absolute; left:0; right:0; bottom:26px; text-align:center; color:#fff; font-size:17px; font-weight:600; letter-spacing:.06em; font-variant-numeric:tabular-nums; pointer-events:none; }
   @media (max-width:720px) { #light img { max-width:calc(100vw - 20px); max-height:calc(100vh - 170px); } #lPrev, #lNext { top:auto; bottom:12px; transform:none; } }
   /* 터치 기기: 누르는 곳은 44px 이상 */
-  @media (pointer:coarse) {
+  @media (pointer:coarse), (any-pointer:coarse) {   /* 마우스와 터치를 함께 쓰는 기기도 터치 크기로 */
     #stick { display:block; } #help { bottom:150px; } #help .hk { display:none; } #help .ht { display:block; }
     button { min-height:44px; padding-left:16px; padding-right:16px; } #chips button { min-width:44px; }
-    #bHome { padding:12px 10px 12px 0; margin:-12px 0; }
+    #bHome { min-height:44px; padding:12px 10px 12px 0; margin:-12px 0; }   /* 글꼴이 달라도 터치 높이 44px 보장 */
   }
   /* 좁은 화면·가로로 눕힌 휴대폰: 위에는 방 이름 띠, 아래에는 평면도/사진을 여닫는 버튼 */
+  body.no-photos #photos, body.no-photos #dPhotos { display:none !important; }   /* 사진 폴더가 없을 때(공개 저장소) */
   @media (max-width:720px), (max-height:520px) {
     #head { left:8px; top:8px; padding:8px 12px 10px; width:min(var(--head-w),calc(100vw - 16px)); }
     #head .sub { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; } #head h1 { font-size:15px; margin-bottom:4px; }
@@ -704,8 +705,10 @@ const chips=document.getElementById('chips'); Object.keys(VIEW).forEach(n=>{ con
 /* ---------- 실제 사진 ---------- */
 const thumbs=document.getElementById('thumbs'), light=document.getElementById('light'); let shown='';
 function showRoom(name){ if(name===shown) return; shown=name; document.getElementById('roomName').textContent=name; document.getElementById('roomNote').textContent=NOTE[name]||''; document.getElementById('photoRoom').textContent=name;
-  thumbs.innerHTML=''; (PHOTOS[name]||[]).forEach((id,k)=>{ const bt=document.createElement('button'), im=document.createElement('img'); bt.type='button'; bt.setAttribute('aria-label',name+' 실제 사진 '+(k+1)+' 크게 보기'); im.src='photos/'+id+'.jpg'; im.alt=''; bt.appendChild(im); bt.onclick=()=>lOpen(PHOTOS[name],k,name,bt); thumbs.appendChild(bt); });
+  thumbs.innerHTML=''; if(!document.body.classList.contains('no-photos')) (PHOTOS[name]||[]).forEach((id,k)=>{ const bt=document.createElement('button'), im=document.createElement('img'); bt.type='button'; bt.setAttribute('aria-label',name+' 실제 사진 '+(k+1)+' 크게 보기'); im.src='photos/'+id+'.jpg'; im.alt=''; bt.appendChild(im); bt.onclick=()=>lOpen(PHOTOS[name],k,name,bt); thumbs.appendChild(bt); });
   [...chips.children].forEach(b=>{ const on=b.textContent===name; b.classList.toggle('on',on); if(on) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); }); }
+// 실제 사진은 공개 저장소에 올리지 않는다. photos 폴더가 없으면 사진 패널과 [실제 사진] 버튼을 숨긴다.
+(()=>{ const t=new Image(); t.onerror=()=>{ document.body.classList.add('no-photos'); thumbs.innerHTML=''; document.body.classList.remove('show-photos'); syncDock(); }; t.src='photos/'+Object.values(PHOTOS)[0][0]+'.jpg'; })();
 // 사진 크게 보기: 닫기 버튼, 좌우 넘김, 쪽 표시
 const lImg=light.querySelector('img'), lPage=document.getElementById('lPage'), lPrev=document.getElementById('lPrev'), lNext=document.getElementById('lNext'), lClose=document.getElementById('lClose');
 let lList=[], lIdx=0, lName='', lFrom=null;
