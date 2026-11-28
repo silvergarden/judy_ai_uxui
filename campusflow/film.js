@@ -16,7 +16,7 @@ const {chromium}=require('playwright');const C=require('./common');const fs=requ
  await p.goto('file://'+require('path').resolve(__dirname,'stage.html'));
  await p.addStyleTag({content:C.fontCss()});
  const fr=p.frame({name:'app'});await fr.waitForSelector('#nav');
- const IW=1360,IH=910;
+ const IW=1360,IH=1020;
  await fr.addStyleTag({content:C.fontCss()+`
  #fcur{position:fixed;z-index:99999;left:0;top:0;width:40px;height:40px;pointer-events:none;transform:translate(680px,520px)}
  #fring{position:fixed;inset:0;z-index:99996;pointer-events:none}
@@ -53,7 +53,7 @@ const {chromium}=require('playwright');const C=require('./common');const fs=requ
  // screencast
  const cdp=await c.newCDPSession(p);const frames=[];let n=0;
  cdp.on('Page.screencastFrame',async f=>{const name=`frames/${String(n++).padStart(5,'0')}.jpg`;fs.writeFileSync(name,Buffer.from(f.data,'base64'));frames.push([name,f.metadata.timestamp]);cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId}).catch(()=>{})});
- await step('시작','처음 열면<br>비어 있어요','강의도 마감도 아직 없어요',0,0);await strip('story','“수업, 마감, 공부 시간을 맞춰 주는 대학생용 플래너예요.”');await W(500);
+ await step('시작','처음 열면<br>비어 있어요','대학생용 플래너 CampusFlow',0,0);await strip('story','“수업, 마감, 공부 시간을 맞춰 주는 대학생용 플래너예요.”');await W(500);
  await cdp.send('Page.startScreencast',{format:'jpeg',quality:92,maxWidth:1920,maxHeight:1080,everyNthFrame:1});
  const t0=Date.now();const mark=l=>console.log(l,((Date.now()-t0)/1000).toFixed(1));
  // 시작
@@ -76,8 +76,8 @@ const {chromium}=require('playwright');const C=require('./common');const fs=requ
  await step('TASK 1 · 5/5','시간표에<br>들어갔어요','강의와 다가오는 마감',1,0);await W(500);
  await circ('.rightcol section',{pad:6,after:600});mark('t1');
  // 이어서
- await strip('story','“직접 입력은 한 번도 하지 않았어요.”');await step('이어서','나머지 강의도<br>넣었어요','같은 방법으로 3과목 더',0,1);
- await W(450);await fr.evaluate(C.REST);await W(2300);mark('jump');
+ await strip('story','“직접 입력은 한 번도 하지 않았어요.”');await step('이어서','나머지 강의도<br>넣었어요','직접 입력 없이 3과목 더',0,1);
+ await W(450);await fr.evaluate(C.REST);await W(1700);mark('jump');
  // TASK 2
  await strip('task','“중요도만 고르면 공부 계획이 만들어져요.”');
  await step('TASK 2 · 1/3','중요도를<br>골라요','과목마다 1~5',2,1);
@@ -107,7 +107,7 @@ const {chromium}=require('playwright');const C=require('./common');const fs=requ
  await step('TASK 4 · 3/3','수요일이<br>비었어요','공부 계획이 다시 맞춰졌어요',4,3);await W(500);
  await circ('.wk',{pad:-30,maxry:300,after:700});mark('t4');
  // 끝
- await strip('story','“조금 더 여유로운 대학 생활”');await step('v3.0','CampusFlow','대학생용 플래너',0,4);
+ await strip('story','“조금 더 여유로운 대학 생활”');await step('v3.0','CampusFlow','조금 더 여유로운 대학 생활',0,4);
  await glide(OX+fb.width*.93,OY+fb.height*.2);await W(2200);mark('end');
  await cdp.send('Page.stopScreencast');await W(300);
  let out='';
