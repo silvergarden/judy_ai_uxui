@@ -24,11 +24,8 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F1F1EE;color:#1
 .tk.done i::after{content:"";position:absolute;width:17px;height:9px;border-left:4px solid #fff;border-bottom:4px solid #fff;transform:translateY(-3px) rotate(-45deg)}
 #strip{position:absolute;left:0;right:0;bottom:0;height:120px;display:flex;align-items:center;gap:40px;padding:0 110px;background:#191919;color:#fff;white-space:nowrap;transition:background .3s}
 #strip>*{transition:opacity .22s}
-#strip i{font-style:normal;font-size:30px;font-weight:900;letter-spacing:.2em;padding:15px 44px 15px 48px;background:#191919;color:#FFCE52}
-#strip span{font-size:42px;font-weight:900;letter-spacing:-.01em}
-#strip small{font-size:34px;font-weight:400}
+#strip span{font-size:42px;font-weight:700;letter-spacing:-.01em}
 #strip.task{background:#FFCE52;color:#191919}
-#strip.story span{font-weight:700}
 </style></head>
 <body>
 <div id="left"><div id="chip"></div><div id="head"></div><div id="sub"></div></div>
@@ -48,9 +45,10 @@ window.__step=(chip,head,sub,cur,done)=>{
   setTimeout(()=>{$('#chip').textContent=chip;$('#head').innerHTML=head;$('#sub').textContent=sub||'';$('#sub').style.display=sub?'':'none';L.style.opacity=1},200);
   document.querySelectorAll('.tk').forEach((e,i)=>{e.className='tk'+(i<done?' done':(i+1===cur?' cur':''))});
 };
-window.__strip=(tag,title,quote)=>{
+// 아래 띠: 말하는 한 문장만. task=노랑(Task의 약속), story=검정(이야기)
+window.__strip=(kind,text)=>{
   const S=$('#strip');[...S.children].forEach(c=>c.style.opacity=0);
-  setTimeout(()=>{S.className=tag?'task':'story';S.innerHTML=(tag?`<i>${tag}</i>`:'')+`<span>${title}</span>`+(quote?`<small>${quote}</small>`:'')},200);
+  setTimeout(()=>{S.className=kind;S.innerHTML=`<span>${text}</span>`},200);
 };
 </script>
 </body></html>
