@@ -4,7 +4,7 @@
 
 Fable 5.2와 대화하며 만든 우리 집 3D 룸 투어입니다. 코드는 직접 쓰지 않았습니다.
 
-- 바로 보기: https://silvergarden.github.io/judy_ai_uxui/room-tour/ (실제 사진 없는 공개판)
+- 바로 보기: https://silvergarden.github.io/kwonjeongeun_ai_uxui/room-tour/ (실제 사진 없는 공개판)
 - 작업 기간: 2026. 11. 16.~2026. 11. 17.
 - 작업 시간: 약 10시간
 - 대상: 집에 와 보지 못한 가족과 지인, 입주 때 모습을 남겨 두려는 나

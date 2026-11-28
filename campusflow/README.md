@@ -6,7 +6,7 @@ Fable 5.2와 대화하며 만든 대학생용 플래너 프로토타입입니다
 
 대학 수업의 한 팀이 만든 CampusFlow를 멘토링하면서, 개선안을 직접 눌러 볼 수 있게 만든 것입니다. 원본 서비스와 아이디어는 그 팀의 것입니다.
 
-- 바로 보기: https://silvergarden.github.io/judy_ai_uxui/campusflow/ (AI 미연결 상태로 열림)
+- 바로 보기: https://silvergarden.github.io/kwonjeongeun_ai_uxui/campusflow/ (AI 미연결 상태로 열림)
 - Claude 아티팩트(AI 연결): https://claude.ai/artifact/83ALQD2SKbfv9vExN9omt7
 - PRD: [PRD.md](PRD.md)
 - 작업 기간: 2026. 11. 20., 2026. 11. 27.(이틀)

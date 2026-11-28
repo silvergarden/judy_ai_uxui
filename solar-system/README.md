@@ -4,7 +4,7 @@
 
 Fable 5.2와 대화하며 만든 태양계 3D 모형입니다. 코드는 직접 쓰지 않았습니다.
 
-- 바로 보기: https://silvergarden.github.io/judy_ai_uxui/solar-system/
+- 바로 보기: https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/
 - Claude 아티팩트: https://claude.ai/artifact/STZWnwywuAohy7BuW7hbT6
 - 작업 기간: 2026.11.12 ~ 2026.11.13 
 - 작업 시간: 약 8시간
