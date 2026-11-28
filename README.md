@@ -47,9 +47,9 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 <!-- works:all:start -->
 | 날짜 | 작업 | 한 줄 설명 | 작업 시간 | 링크 |
 |---|---|---|---|---|
-| 2026.11.27 | CampusFlow v3.0 프로토타입 | 대학생용 플래너 개선안 | 약 12시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/campusflow/) · [설명](campusflow/) |
-| 2026.11.17 | 우리 집 3D 룸 투어 | 평면도로 세운 집을 걸어서 둘러보는 3D 투어 | 약 10시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/room-tour/) · [설명](room-tour/) |
-| 2026.11.13 | 태양계 3D 모형 | 초등 6학년~중학생 과학 수업용 모형 | 약 8시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/) · [설명](solar-system/) |
+| 2026.11.27 | [CampusFlow v3.0 프로토타입](campusflow/) | 대학생용 플래너 개선안 | 약&nbsp;12시간 | [바로&nbsp;보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/campusflow/) |
+| 2026.11.17 | [우리 집 3D 룸 투어](room-tour/) | 평면도로 세운 집을 걸어서 둘러보는 3D 투어 | 약&nbsp;10시간 | [바로&nbsp;보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/room-tour/) |
+| 2026.11.13 | [태양계 3D 모형](solar-system/) | 초등 6학년~중학생 과학 수업용 모형 | 약&nbsp;8시간 | [바로&nbsp;보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/) |
 <!-- works:all:end -->
 
 ## 폴더 구성

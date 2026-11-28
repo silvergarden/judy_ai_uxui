@@ -60,8 +60,9 @@ def readme_all(works):
     rows = ["| 날짜 | 작업 | 한 줄 설명 | 작업 시간 | 링크 |", "|---|---|---|---|---|"]
     for w in works:
         f = w["folder"]
-        rows.append("| %s | %s | %s | %s | [바로 보기](%s%s/) · [설명](%s/) |"
-                    % (dot(w["date"], False), w["title"], w["oneLine"], w["hours"], SITE, f, f))
+        # 작업 이름에 작업 설명(폴더) 링크를 걸고, 링크 칸에는 바로 보기만 둔다. &nbsp;로 짧은 칸이 두 줄로 깨지지 않게 한다.
+        rows.append("| %s | [%s](%s/) | %s | %s | [바로&nbsp;보기](%s%s/) |"
+                    % (dot(w["date"], False), w["title"], f, w["oneLine"], w["hours"].replace(" ", "&nbsp;"), SITE, f))
     return "\n".join(rows)
 
 
