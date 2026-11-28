@@ -4,7 +4,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 [바로 보기 사이트](https://silvergarden.github.io/kwonjeongeun_ai_uxui/) · [LinkedIn](https://www.linkedin.com/in/jeongeunkwon/) · [이메일](mailto:kwonjeongeun@gmail.com)
 
-## 대표 작업
+## 최신 작업
 
 ### CampusFlow v3.0 프로토타입 (2026.11.27)
 
