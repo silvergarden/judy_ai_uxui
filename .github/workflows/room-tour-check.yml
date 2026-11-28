@@ -1,0 +1,32 @@
+# 룸 투어가 바뀔 때마다 check.py를 자동으로 돌린다.
+# 페이지에 나오면 안 되는 낱말(단지 이름 등)은 저장소 Settings > Secrets and variables > Actions에
+# ROOM_TOUR_FORBIDDEN 이라는 이름으로 "낱말1,낱말2" 처럼 넣어 두면 함께 점검한다.
+name: 룸 투어 점검
+
+on:
+  push:
+    branches: [main]
+    paths: ['room-tour/**', '.github/workflows/room-tour-check.yml']
+  pull_request:
+    paths: ['room-tour/**', '.github/workflows/room-tour-check.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright
+      - name: check.py 실행
+        working-directory: room-tour
+        env:
+          CHROME: /usr/bin/google-chrome
+          ROOM_TOUR_FORBIDDEN: ${{ secrets.ROOM_TOUR_FORBIDDEN }}
+        run: python3 check.py
