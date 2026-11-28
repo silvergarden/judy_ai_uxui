@@ -2,7 +2,7 @@
 
 UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 대화하며 웹 작업을 만들고, 기획 문서와 디자인 시스템, 유니버설 디자인 점검을 함께 남깁니다. 코드는 직접 쓰지 않았습니다.
 
-[바로 보기 사이트](https://silvergarden.github.io/kwonjeongeun_ai_uxui/) · [LinkedIn](https://www.linkedin.com/in/jeongeunkwon/) · 이메일 kwonjeongeun@gmail.com
+[바로 보기 사이트](https://silvergarden.github.io/kwonjeongeun_ai_uxui/) · [LinkedIn](https://www.linkedin.com/in/jeongeunkwon/) · [이메일 복사](https://silvergarden.github.io/kwonjeongeun_ai_uxui/#email)
 
 ## 최신 작업
 

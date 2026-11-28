@@ -43,6 +43,7 @@
   @media (max-width:560px) { table { min-width:0; } th:nth-child(3), td:nth-child(3) { display:none; } th, td { padding:12px; } }   /* 휴대폰에서는 한 줄 설명을 숨겨 가로 스크롤 없이 */
   .contact .copy { min-height:44px; padding:0 16px; border:1px solid #8C8C88; border-radius:999px; background:none; color:var(--ink); font:inherit; font-size:15px; font-weight:700; cursor:pointer; }
   .contact .copy:focus-visible { outline:3px solid #2F6FEB; outline-offset:2px; }
+  .contact .copy.ping { background:var(--ink); color:#fff; border-color:var(--ink); }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   footer { margin-top:40px; color:var(--sub); font-size:14px; }
   footer a { color:var(--ink); }
@@ -110,11 +111,17 @@
 <script>
 // 메일 앱이 연결되지 않은 기기에서는 이메일 링크를 눌러도 아무 일이 없으므로, 주소를 복사하는 버튼을 둔다
 document.getElementById('copyMail').onclick = async (e) => {
-  const b = e.currentTarget, mail = 'kwonjeongeun@gmail.com';
+  const b = e.currentTarget, mail = ['kwonjeongeun', 'gmail.com'].join('@');   // 주소를 그대로 적지 않아 수집 프로그램이 덜 가져가게
   try { await navigator.clipboard.writeText(mail); b.textContent = '복사했어요'; document.getElementById('mailStatus').textContent = '이메일 주소 ' + mail + '을 복사했습니다'; }
   catch (err) { b.textContent = mail; }
   setTimeout(() => { b.textContent = '이메일 복사'; }, 2000);
 };
+// GitHub README의 [이메일 복사] 링크(#email)로 들어오면 복사 버튼을 강조한다
+if (location.hash === '#email') {
+  const b = document.getElementById('copyMail');
+  b.classList.add('ping'); b.focus({ preventScroll:true });
+  document.getElementById('mailStatus').textContent = '이메일 복사 버튼을 누르면 주소가 복사됩니다';
+}
 </script>
 </body>
 </html>
