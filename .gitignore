@@ -1,0 +1,6 @@
+# 실제 사진은 개인 정보라 저장소에 올리지 않는다
+room-tour/photos/
+
+# 운영체제가 만드는 파일
+.DS_Store
+Thumbs.db
