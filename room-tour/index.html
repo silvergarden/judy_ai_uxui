@@ -64,7 +64,7 @@
   @media (pointer:coarse), (any-pointer:coarse) {   /* 마우스와 터치를 함께 쓰는 기기도 터치 크기로 */
     #stick { display:block; } #help { bottom:150px; } #help .hk { display:none; } #help .ht { display:block; }
     button { min-height:44px; padding-left:16px; padding-right:16px; } #chips button { min-width:44px; }
-    #bHome { padding:12px 10px 12px 0; margin:-12px 0; }
+    #bHome { min-height:44px; padding:12px 10px 12px 0; margin:-12px 0; }   /* 글꼴이 달라도 터치 높이 44px 보장 */
   }
   /* 좁은 화면·가로로 눕힌 휴대폰: 위에는 방 이름 띠, 아래에는 평면도/사진을 여닫는 버튼 */
   body.no-photos #photos, body.no-photos #dPhotos { display:none !important; }   /* 사진 폴더가 없을 때(공개 저장소) */
