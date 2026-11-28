@@ -42,8 +42,8 @@ def static():
 LAYOUT = """(()=>{const vis=e=>{if(!e)return false;const c=getComputedStyle(e);return c.display!=='none'&&c.visibility!=='hidden'&&!e.hidden};
 const R={};['head','side','photos','help','stick','dock'].forEach(id=>{const e=document.getElementById(id);if(vis(e)){const r=e.getBoundingClientRect();R[id]=[r.left,r.top,r.right,r.bottom]}});
 const ov=[],off=[];const k=Object.keys(R);for(let i=0;i<k.length;i++){const a=R[k[i]];if(a[0]<-0.5||a[1]<-0.5||a[2]>innerWidth+0.5||a[3]>innerHeight+0.5)off.push(k[i]);for(let j=i+1;j<k.length;j++){const b=R[k[j]];if(a[0]<b[2]&&b[0]<a[2]&&a[1]<b[3]&&b[1]<a[3])ov.push(k[i]+'×'+k[j])}}
-const hs=[...document.querySelectorAll('button')].filter(b=>b.offsetParent&&!b.closest('#light')&&!b.closest('#thumbs')).map(b=>Math.round(b.getBoundingClientRect().height));
-return {ov,off,minH:Math.min(...hs)}})()"""
+const bs=[...document.querySelectorAll('button')].filter(b=>b.offsetParent&&!b.closest('#light')&&!b.closest('#thumbs')),hs=bs.map(b=>Math.round(b.getBoundingClientRect().height)),lo=bs[hs.indexOf(Math.min(...hs))];
+return {ov,off,minH:Math.min(...hs),minB:lo?(lo.id||lo.textContent.trim()):'',coarse:matchMedia('(pointer:coarse)').matches,anyCoarse:matchMedia('(any-pointer:coarse)').matches}})()"""
 
 def behave(base):
     with sync_playwright() as p:
@@ -109,7 +109,7 @@ def viewports(p, b, base):
             q.evaluate("document.getElementById('bHelp').click()"); q.wait_for_timeout(200); states.append(("안내 열림", q.evaluate(LAYOUT)))
             for st, r in states:
                 check(not r["ov"] and not r["off"], "%s %dx%d %s: 겹침·화면 밖 없음" % (name, vw, vh, st) + (" → %s %s" % (r["ov"], r["off"]) if r["ov"] or r["off"] else ""))
-            if touch: check(states[0][1]["minH"] >= 44, "%s: 터치 버튼 높이 44px 이상(최소 %d)" % (name, states[0][1]["minH"]))
+            if touch: check(states[0][1]["minH"] >= 44, "%s: 터치 버튼 높이 44px 이상(최소 %d)" % (name, states[0][1]["minH"]) + ("" if states[0][1]["minH"] >= 44 else " → %s, pointer:coarse=%s, any-pointer:coarse=%s" % (states[0][1]["minB"], states[0][1]["coarse"], states[0][1]["anyCoarse"])))
             ctx.close()
         b.close()
 

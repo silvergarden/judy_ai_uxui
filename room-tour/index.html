@@ -61,7 +61,7 @@
   #lPage { position:absolute; left:0; right:0; bottom:26px; text-align:center; color:#fff; font-size:17px; font-weight:600; letter-spacing:.06em; font-variant-numeric:tabular-nums; pointer-events:none; }
   @media (max-width:720px) { #light img { max-width:calc(100vw - 20px); max-height:calc(100vh - 170px); } #lPrev, #lNext { top:auto; bottom:12px; transform:none; } }
   /* 터치 기기: 누르는 곳은 44px 이상 */
-  @media (pointer:coarse) {
+  @media (pointer:coarse), (any-pointer:coarse) {   /* 마우스와 터치를 함께 쓰는 기기도 터치 크기로 */
     #stick { display:block; } #help { bottom:150px; } #help .hk { display:none; } #help .ht { display:block; }
     button { min-height:44px; padding-left:16px; padding-right:16px; } #chips button { min-width:44px; }
     #bHome { padding:12px 10px 12px 0; margin:-12px 0; }
