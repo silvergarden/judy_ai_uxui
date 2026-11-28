@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>CampusFlow v3.0 영상 무대</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#F1F1EE;color:#191919;font-family:"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
+#left{position:absolute;left:66px;top:0;width:390px;height:960px;display:flex;flex-direction:column;justify-content:center;transition:opacity .22s}
+#chip{align-self:flex-start;background:#191919;color:#FFCE52;font-weight:900;font-size:24px;line-height:1;letter-spacing:.04em;padding:13px 26px;border-radius:999px;margin-bottom:34px}
+#head{font-weight:900;font-size:56px;line-height:1.24;letter-spacing:-.02em;white-space:nowrap}
+#sub{margin-top:20px;font-size:27px;line-height:1.4;color:#6E6E6A;font-weight:400;white-space:nowrap}
+#dev{position:absolute;left:472px;top:124px;width:1000px;height:712px;background:#191919;border-radius:26px;padding:10px;box-shadow:0 30px 60px rgba(25,25,25,.16),0 6px 16px rgba(25,25,25,.10)}
+#bar{height:36px;display:flex;align-items:center;gap:8px;padding:0 14px;position:relative}
+#bar b{width:11px;height:11px;border-radius:50%;background:#4A4A47}
+#bar span{position:absolute;left:0;right:0;text-align:center;color:#B9B9B4;font-size:15px;font-weight:500;letter-spacing:.02em}
+#scr{width:980px;height:656px;overflow:hidden;border-radius:0 0 17px 17px;background:#fff}
+#appf{width:1360px;height:910px;border:0;transform:scale(.72059);transform-origin:0 0;display:block}
+#right{position:absolute;left:1516px;top:0;width:380px;height:960px;display:flex;flex-direction:column;justify-content:center}
+#right h2{font-size:26px;font-weight:500;color:#6E6E6A;margin-bottom:30px}
+.tk{display:flex;align-items:center;gap:16px;height:44px;margin-bottom:28px;font-size:22px;white-space:nowrap;color:#B4B4AF;font-weight:400;transition:color .3s}
+.tk i{flex:none;width:44px;height:44px;border-radius:50%;border:2.5px solid #C9C9C4;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:20px;color:#B4B4AF;transition:all .3s}
+.tk.cur{color:#191919;font-weight:700}
+.tk.cur i{background:#FFCE52;border-color:#FFCE52;color:#191919;font-weight:900}
+.tk.done{color:#6E6E6A}
+.tk.done i{background:#191919;border-color:#191919;color:transparent;position:relative}
+.tk.done i::after{content:"";position:absolute;width:17px;height:9px;border-left:4px solid #fff;border-bottom:4px solid #fff;transform:translateY(-3px) rotate(-45deg)}
+#strip{position:absolute;left:0;right:0;bottom:0;height:120px;display:flex;align-items:center;gap:40px;padding:0 110px;background:#191919;color:#fff;white-space:nowrap;transition:background .3s}
+#strip>*{transition:opacity .22s}
+#strip i{font-style:normal;font-size:30px;font-weight:900;letter-spacing:.2em;padding:15px 44px 15px 48px;background:#191919;color:#FFCE52}
+#strip span{font-size:42px;font-weight:900;letter-spacing:-.01em}
+#strip small{font-size:34px;font-weight:400}
+#strip.task{background:#FFCE52;color:#191919}
+#strip.story span{font-weight:700}
+</style></head>
+<body>
+<div id="left"><div id="chip"></div><div id="head"></div><div id="sub"></div></div>
+<div id="dev"><div id="bar"><b></b><b></b><b></b><span>CampusFlow</span></div><div id="scr"><iframe id="appf" name="app" src="index.html"></iframe></div></div>
+<div id="right"><h2>주요 Task</h2>
+ <div class="tk"><i>1</i>공지·강의계획서로 일정 넣기</div>
+ <div class="tk"><i>2</i>우선순위로 공부 계획 만들기</div>
+ <div class="tk"><i>3</i>이번 주 일정 확인하기</div>
+ <div class="tk"><i>4</i>바뀐 일정에 다시 맞추기</div>
+</div>
+<div id="strip" class="story"></div>
+<script>
+const $=s=>document.querySelector(s);
+// 왼쪽 안내: chip, head, sub / 오른쪽 목록: cur(진행 중 번호, 0이면 없음), done(끝난 개수)
+window.__step=(chip,head,sub,cur,done)=>{
+  const L=$('#left');L.style.opacity=0;
+  setTimeout(()=>{$('#chip').textContent=chip;$('#head').innerHTML=head;$('#sub').textContent=sub||'';$('#sub').style.display=sub?'':'none';L.style.opacity=1},200);
+  document.querySelectorAll('.tk').forEach((e,i)=>{e.className='tk'+(i<done?' done':(i+1===cur?' cur':''))});
+};
+window.__strip=(tag,title,quote)=>{
+  const S=$('#strip');[...S.children].forEach(c=>c.style.opacity=0);
+  setTimeout(()=>{S.className=tag?'task':'story';S.innerHTML=(tag?`<i>${tag}</i>`:'')+`<span>${title}</span>`+(quote?`<small>${quote}</small>`:'')},200);
+};
+</script>
+</body></html>
