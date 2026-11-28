@@ -2,9 +2,11 @@
 
 UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 대화하며 웹 작업을 만들고, 기획 문서와 디자인 시스템, 유니버설 디자인 점검을 함께 남깁니다. 코드는 직접 쓰지 않았습니다.
 
-[바로 보기 사이트](https://silvergarden.github.io/kwonjeongeun_ai_uxui/) · [LinkedIn](https://www.linkedin.com/in/jeongeunkwon/) · [이메일](mailto:kwonjeongeun@gmail.com)
+[바로 보기 사이트](https://silvergarden.github.io/kwonjeongeun_ai_uxui/) · [LinkedIn](https://www.linkedin.com/in/jeongeunkwon/) · 이메일 kwonjeongeun@gmail.com
 
 ## 최신 작업
+
+가장 최근에 만든 작업 3개입니다.
 
 ### CampusFlow v3.0 프로토타입 (2026.11.27)
 
@@ -30,7 +32,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 행성이 실제 궤도 요소대로 공전하고, 천체를 누르면 정보 카드와 탐구 질문이 나오는 초등 6학년~중학생 과학 수업용 모형입니다.
 
-내가 한 일: 수업용 기획 · 디자인 시스템과 유니버설 디자인 기준 · 85개 항목 자동 점검
+내가 한 일: 교육용 기획 · 디자인 시스템과 유니버설 디자인 기준 · 85개 항목 자동 점검
 
 [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/) · [작업 설명](solar-system/) · [디자인 시스템](solar-system/DESIGN.md)
 
@@ -38,7 +40,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 ## 전체 작업
 
-최신 작업이 위에 옵니다.
+최근 작업이 위에 옵니다.
 
 | 날짜 | 작업 | 한 줄 설명 | 작업 시간 | 링크 |
 |---|---|---|---|---|
