@@ -1,0 +1,38 @@
+# works.json이 바뀌면 README와 사이트 첫 화면(index.html)의 작업 목록을 자동으로 다시 만든다.
+name: 작업 목록 자동 갱신
+
+on:
+  push:
+    branches: [main]
+    paths: ['works.json', 'scripts/build_home.py', '.github/workflows/build-home.yml']
+  pull_request:
+    paths: ['works.json', 'scripts/build_home.py', '.github/workflows/build-home.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # PR에서는 works.json에 오류가 없는지만 확인한다
+      - name: works.json 점검
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/build_home.py --check || python3 scripts/build_home.py
+      # main에서는 README와 index.html을 다시 만들고, 바뀐 것이 있으면 커밋한다
+      - name: README와 첫 화면 다시 만들기
+        if: github.event_name != 'pull_request'
+        run: |
+          python3 scripts/build_home.py
+          if [ -n "$(git status --porcelain README.md index.html)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md index.html
+            git commit -m "works.json에 맞춰 README와 첫 화면 작업 목록 갱신"
+            git push
+          fi

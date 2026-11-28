@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 작업 목록(최신 작업 카드, 전체 작업 표)은 works.json으로 자동 생성됩니다. 직접 고치지 말고 works.json을 고치세요. -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,12 +62,13 @@
   </nav>
   <h2 class="sec">최신 작업</h2>
   <ul>
+<!-- works:latest:start -->
     <li>
       <img loading="lazy" src="campusflow/CampusFlow-v3.0.gif" alt="CampusFlow v3.0 시연: AI 도우미에게 강의 일정을 넣는 화면">
       <div class="body">
         <span class="date">2026. 11. 27.</span>
         <h2>CampusFlow v3.0 프로토타입</h2>
-        <p>대학생용 플래너 개선안. 강의계획서를 붙여 넣으면 일정이 들어가고, 말 한마디로 공부 계획을 다시 맞춥니다.</p>
+        <p>대학생용 플래너 CampusFlow의 개선안 프로토타입입니다. 강의계획서를 붙여 넣으면 일정이 들어가고, 일정이 바뀌면 말 한마디로 공부 계획을 다시 맞춥니다.</p>
         <p class="role"><b>내가 한 일</b> 대학 수업 팀 멘토링 · 개선 방향 기획 · PRD · 디자인 시스템</p>
         <div class="links"><a class="btn go" href="campusflow/">바로 보기</a><a class="btn doc" href="https://github.com/silvergarden/kwonjeongeun_ai_uxui/tree/main/campusflow">작업 설명</a></div>
       </div>
@@ -76,7 +78,7 @@
       <div class="body">
         <span class="date">2026. 11. 17.</span>
         <h2>우리 집 3D 룸 투어</h2>
-        <p>평면도대로 세운 37평 집을 걸어서 둘러보는 3D 투어입니다.</p>
+        <p>37평 집을 평면도대로 세워 걸어서 둘러보는 3D 룸 투어입니다. 공개판에는 실제 사진을 넣지 않았습니다.</p>
         <p class="role"><b>내가 한 일</b> 기획 · 디자인 시스템과 유니버설 디자인 기준 · 72개 항목 자동 점검</p>
         <div class="links"><a class="btn go" href="room-tour/">바로 보기</a><a class="btn doc" href="https://github.com/silvergarden/kwonjeongeun_ai_uxui/tree/main/room-tour">작업 설명</a></div>
       </div>
@@ -86,11 +88,12 @@
       <div class="body">
         <span class="date">2026. 11. 13.</span>
         <h2>태양계 3D 모형</h2>
-        <p>행성이 실제 궤도 요소대로 공전하는 초등 6학년~중학생 과학 수업용 모형입니다.</p>
-        <p class="role"><b>내가 한 일</b> 교육용 기획 · 디자인 시스템과 유니버설 디자인 기준 · 85개 항목 자동 점검</p>
+        <p>행성이 실제 궤도 요소대로 공전하고, 천체를 누르면 정보 카드와 탐구 질문이 나오는 초등 6학년~중학생 과학 수업용 모형입니다.</p>
+        <p class="role"><b>내가 한 일</b> 기획 · 디자인 시스템과 유니버설 디자인 기준 · 85개 항목 자동 점검</p>
         <div class="links"><a class="btn go" href="solar-system/">바로 보기</a><a class="btn doc" href="https://github.com/silvergarden/kwonjeongeun_ai_uxui/tree/main/solar-system">작업 설명</a></div>
       </div>
     </li>
+<!-- works:latest:end -->
   </ul>
   <section class="all" aria-labelledby="allTitle">
     <h2 class="sec" id="allTitle">전체 작업</h2>
@@ -99,9 +102,11 @@
       <table>
         <thead><tr><th scope="col">날짜</th><th scope="col">작업</th><th scope="col">한 줄 설명</th><th scope="col">작업 시간</th></tr></thead>
         <tbody>
+<!-- works:all:start -->
           <tr><td class="date">2026.11.27</td><td><a href="campusflow/">CampusFlow v3.0 프로토타입</a></td><td>대학생용 플래너 개선안</td><td>약 12시간</td></tr>
           <tr><td class="date">2026.11.17</td><td><a href="room-tour/">우리 집 3D 룸 투어</a></td><td>평면도로 세운 집을 걸어서 둘러보는 3D 투어</td><td>약 10시간</td></tr>
           <tr><td class="date">2026.11.13</td><td><a href="solar-system/">태양계 3D 모형</a></td><td>초등 6학년~중학생 과학 수업용 모형</td><td>약 8시간</td></tr>
+<!-- works:all:end -->
         </tbody>
       </table>
     </div>

@@ -8,6 +8,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 가장 최근에 만든 작업 3개입니다.
 
+<!-- works:latest:start -->
 ### CampusFlow v3.0 프로토타입 (2026.11.27)
 
 대학생용 플래너 CampusFlow의 개선안 프로토타입입니다. 강의계획서를 붙여 넣으면 일정이 들어가고, 일정이 바뀌면 말 한마디로 공부 계획을 다시 맞춥니다.
@@ -16,7 +17,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/campusflow/) · [작업 설명](campusflow/) · [PRD](campusflow/PRD.md) · [디자인 시스템](campusflow/DESIGN.md)
 
-![CampusFlow v3.0 시연](campusflow/CampusFlow-v3.0.gif)
+![CampusFlow v3.0 시연: AI 도우미에게 강의 일정을 넣는 화면](campusflow/CampusFlow-v3.0.gif)
 
 ### 우리 집 3D 룸 투어 (2026.11.17)
 
@@ -26,7 +27,7 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/room-tour/) · [작업 설명](room-tour/) · [디자인 시스템](room-tour/DESIGN.md)
 
-![우리 집 3D 룸 투어 시연](room-tour/%28Fable%29%20room-tour-v1.0.gif)
+![우리 집 3D 룸 투어 시연: 위에서 내려다본 집 모형](room-tour/%28Fable%29%20room-tour-v1.0.gif)
 
 ### 태양계 3D 모형 (2026.11.13)
 
@@ -36,17 +37,20 @@ UX/UI 디자이너 권정은의 바이브코딩 작업 모음입니다. AI와 �
 
 [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/) · [작업 설명](solar-system/) · [디자인 시스템](solar-system/DESIGN.md)
 
-![태양계 3D 모형 시연](solar-system/3D-Solar-System-v1.0.gif)
+![태양계 3D 모형 시연: 행성이 궤도를 따라 도는 모습](solar-system/3D-Solar-System-v1.0.gif)
+<!-- works:latest:end -->
 
 ## 전체 작업
 
-최근 작업이 위에 옵니다.
+최근 작업이 위에 옵니다. 이 부분과 위 최신 작업은 [works.json](works.json)으로 자동으로 만들어집니다.
 
+<!-- works:all:start -->
 | 날짜 | 작업 | 한 줄 설명 | 작업 시간 | 링크 |
 |---|---|---|---|---|
 | 2026.11.27 | CampusFlow v3.0 프로토타입 | 대학생용 플래너 개선안 | 약 12시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/campusflow/) · [설명](campusflow/) |
 | 2026.11.17 | 우리 집 3D 룸 투어 | 평면도로 세운 집을 걸어서 둘러보는 3D 투어 | 약 10시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/room-tour/) · [설명](room-tour/) |
 | 2026.11.13 | 태양계 3D 모형 | 초등 6학년~중학생 과학 수업용 모형 | 약 8시간 | [바로 보기](https://silvergarden.github.io/kwonjeongeun_ai_uxui/solar-system/) · [설명](solar-system/) |
+<!-- works:all:end -->
 
 ## 폴더 구성
 
